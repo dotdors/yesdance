@@ -1,0 +1,189 @@
+/**
+ * Location Picker - Split Button Design
+ * DS Location Manager Plugin
+ * 
+ * Structure:
+ * ┌─────────────────┬───┐
+ * │  Atlanta        │ ▼ │
+ * └─────────────────┴───┘
+ * 
+ * Click name = navigate to location page
+ * Click arrow = open dropdown to select different location
+ */
+
+/* ===== CONTAINER ===== */
+.location-picker {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* ===== SPLIT BUTTON CONTAINER ===== */
+.location-picker__split {
+  display: inline-flex;
+  align-items: stretch;
+  border: 2px solid var(--color-border, #eda318);
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--color-secondary, #fff);
+  transition: border-color 0.2s ease;
+}
+
+.location-picker:hover .location-picker__split,
+.location-picker.is-open .location-picker__split {
+  border-color: var(--color-accent, #e23b2a);
+}
+
+/* ===== LOCATION LINK (Left Side) ===== */
+.location-picker__link {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  text-decoration: none;
+  color: var(--color-primary, #000);
+  font-weight: 600;
+  font-size: var(--font-size-small, 0.875rem);
+  transition: background-color 0.2s ease, color 0.2s ease;
+  border-right: 1px solid var(--color-border, #eda318);
+}
+
+.location-picker__link:hover {
+  background: var(--color-surface, #fbf5e4);
+  text-decoration: none;
+  color: var(--color-accent, #e23b2a);
+}
+
+.location-picker__current {
+  white-space: nowrap;
+}
+
+/* ===== DROPDOWN TOGGLE (Right Side) ===== */
+.location-picker__toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 0.75rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text, #5a65a1);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.location-picker__toggle:hover {
+  background: var(--color-surface, #fbf5e4);
+  color: var(--color-accent, #e23b2a);
+}
+
+.location-picker__arrow {
+  transition: transform 0.2s ease;
+}
+
+.location-picker.is-open .location-picker__arrow {
+  transform: rotate(180deg);
+}
+
+/* ===== DROPDOWN MENU ===== */
+.location-picker__dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  min-width: 200px;
+  background: var(--color-secondary, #fff);
+  border: 2px solid var(--color-border, #eda318);
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px);
+  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+  z-index: 1000;
+}
+
+.location-picker.is-open .location-picker__dropdown {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+/* ===== DROPDOWN ITEMS ===== */
+.location-picker__item {
+  display: block;
+  padding: 0.75rem 1rem;
+  text-decoration: none;
+  color: var(--color-text, #5a65a1);
+  font-size: var(--font-size-small, 0.875rem);
+  font-weight: 500;
+  transition: background-color 0.15s ease, color 0.15s ease;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.location-picker__item:last-child {
+  border-bottom: none;
+}
+
+.location-picker__item:hover,
+.location-picker__item:focus {
+  background: var(--color-surface, #fbf5e4);
+  color: var(--color-primary, #000);
+  outline: none;
+}
+
+.location-picker__item.is-current {
+  color: var(--color-accent, #e23b2a);
+  font-weight: 700;
+  position: relative;
+}
+
+.location-picker__item.is-current::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--color-accent, #e23b2a);
+}
+
+/* ===== FOCUS STYLES ===== */
+.location-picker__link:focus-visible,
+.location-picker__toggle:focus-visible,
+.location-picker__item:focus-visible {
+  outline: 2px solid var(--color-accent, #e23b2a);
+  outline-offset: -2px;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .location-picker__link {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8125rem;
+  }
+  
+  .location-picker__toggle {
+    padding: 0.5rem 0.5rem;
+  }
+  
+  .location-picker__dropdown {
+    min-width: 180px;
+  }
+}
+
+/* ===== ACCESSIBILITY ===== */
+@media (prefers-reduced-motion: reduce) {
+  .location-picker__dropdown,
+  .location-picker__arrow,
+  .location-picker__link,
+  .location-picker__toggle,
+  .location-picker__item {
+    transition: none;
+  }
+}
+
+/* ===== MENU ITEM WRAPPER (in nav) ===== */
+.menu-item-location-picker {
+  display: flex;
+  align-items: center;
+  margin-left: 1rem;
+}

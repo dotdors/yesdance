@@ -1,0 +1,129 @@
+<?php
+/**
+ * Location News Carousel Shortcode
+ * 
+ * Displays a horizontal scrolling carousel of recent posts from locations
+ * Shortcode: [ds_location_news_carousel]
+ * 
+ * @package DS_Location_Manager
+ */
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
+class DS_Location_News_Carousel {
+    
+    /**
+     * Constructor
+     */
+    public function __construct() {
+        add_shortcode('ds_location_news_carousel', array($this, 'render_shortcode'));
+        add_action('wp_enqueue_scripts', array($this, 'enqueue_assets'));
+    }
+    
+    /**
+     * Enqueue CSS and JS
+     */
+    public function enqueue_assets() {
+        wp_enqueue_style(
+            'ds-location-news-carousel',
+            plugin_dir_url(__FILE__) . '../assets/location-news-carousel.css',
+            array(),
+            filemtime(plugin_dir_path(__FILE__) . '../assets/location-news-carousel.css')
+        );
+        
+        wp_enqueue_script(
+            'ds-location-news-carousel',
+            plugin_dir_url(__FILE__) . '../assets/location-news-carousel.js',
+            array(),
+            filemtime(plugin_dir_path(__FILE__) . '../assets/location-news-carousel.js'),
+            true
+        );
+    }
+    
+    /**
+     * Render shortcode
+     */
+    public function render_shortcode($atts) {
+        $atts = shortcode_atts(array(
+            'limit' => 10,
+            'taxonomy' => 'ds_location', // Can be changed to 'category' for other sites
+            'order' => 'DESC',
+            'orderby' => 'date',
+            'heading' => 'Latest News',
+            'heading_word_split' => 'last', // 'last', number, or 0 for no split
+            'subtitle' => "Stay updated with what's happening at our locations"
+        ), $atts, 'ds_location_news_carousel');
+        
+        // Decode HTML entities in text fields
+        $atts['heading'] = html_entity_decode($atts['heading']);
+        $atts['subtitle'] = html_entity_decode($atts['subtitle']);
+        
+        // Build query
+        $query_args = array(
+            'post_type' => 'post',
+            'posts_per_page' => intval($atts['limit']),
+            'orderby' => $atts['orderby'],
+            'order' => strtoupper($atts['order']),
+            'post_status' => 'publish'
+        );
+        
+        // Add taxonomy query if needed
+        if (!empty($atts['taxonomy'])) {
+            $query_args['tax_query'] = array(
+                array(
+                    'taxonomy' => $atts['taxonomy'],
+                    'operator' => 'EXISTS'
+                )
+            );
+        }
+        
+        $news_posts = new WP_Query($query_args);
+        
+        if (!$news_posts->have_posts()) {
+            return '';
+        }
+        
+        // Start output buffering
+        ob_start();
+        
+        include plugin_dir_path(__FILE__) . '../templates/location-news-carousel.php';
+        
+        wp_reset_postdata();
+        
+        return ob_get_clean();
+    }
+    
+    /**
+     * Get post location badge info
+     */
+    public static function get_post_location($post_id) {
+        // First try ds_location taxonomy
+        $terms = get_the_terms($post_id, 'ds_location');
+        if ($terms && !is_wp_error($terms)) {
+            $term = $terms[0];
+            return array(
+                'name' => $term->name,
+                'slug' => $term->slug,
+                'url' => get_term_link($term)
+            );
+        }
+        
+        // Fallback to category if no location
+        $categories = get_the_category($post_id);
+        if ($categories && !is_wp_error($categories)) {
+            $cat = $categories[0];
+            return array(
+                'name' => $cat->name,
+                'slug' => $cat->slug,
+                'url' => get_category_link($cat->term_id)
+            );
+        }
+        
+        return null;
+    }
+}
+
+// Initialize
+new DS_Location_News_Carousel();

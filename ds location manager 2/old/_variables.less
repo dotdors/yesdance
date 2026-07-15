@@ -1,0 +1,152 @@
+// out: false
+// ============================
+// _variables.less
+// DS Theme Customizations - Project-Specific Variables
+// ============================
+
+// ===== LIGHT MODE (DEFAULT) =====
+// These are Jane's original light theme colors
+@color-primary-light: #000000;
+@color-secondary-light: #ffffff;
+@color-accent-light: #e23b2a;
+@color-text-light-mode: #5a65a1;
+@color-text-light-secondary: #666666;
+@color-background-light: #ffffff;
+@color-surface-light: #fbf5e4;
+@color-border-light: #eda318;
+
+// ===== DARK MODE =====
+// Your blue/orange theme becomes dark mode
+@color-primary-dark: #ffffff;
+@color-secondary-dark: #eda318;
+@color-accent-dark: #e23b2a;
+@color-text-dark: #ffffff;
+@color-text-dark-secondary: #fbf5e4;
+@color-background-dark: #38427a;
+@color-surface-dark: #5a65a1;
+@color-border-dark: #fbf5e4;
+
+// ===== GRADIENTS =====
+@gradient-split-light: linear-gradient(180deg, 
+  @color-background-light 0%, 
+  @color-background-light 55%, 
+  @color-surface-light 55%, 
+  @color-surface-light 100%);
+
+@gradient-split-dark: linear-gradient(180deg, 
+  @color-background-dark 0%, 
+  @color-background-dark 55%, 
+  @color-surface-dark 55%, 
+  @color-surface-dark 100%);
+
+// ===== TYPOGRAPHY (Same for both modes) =====
+@font-primary: 'DM Sans', Montserrat, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+@font-secondary: Verdana, Georgia, 'Times New Roman', serif;
+
+@font-size-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+@font-size-small: clamp(0.875rem, 0.85rem + 0.125vw, 1rem);
+@font-size-large: clamp(1.125rem, 1.05rem + 0.375vw, 1.25rem);
+@font-size-xl: clamp(1.25rem, 1.15rem + 0.5vw, 1.5rem);
+@font-size-2xl: clamp(1.5rem, 1.25rem + 1.25vw, 2rem);
+@font-size-3xl: clamp(2rem, 1.5rem + 2.5vw, 2.75rem);
+@font-size-4xl: clamp(2.5rem, 1.75rem + 3.75vw, 3.5rem);
+
+@line-height-base: 1.25;
+@line-height-tight: 1;
+
+// ===== SPACING (Same for both modes) =====
+@spacing-xs: 0.25rem;
+@spacing-sm: 0.5rem;
+@spacing-md: 1rem;
+@spacing-lg: 2rem;
+@spacing-xl: 3rem;
+@spacing-2xl: 4rem;
+
+// ===== LAYOUT (Same for both modes) =====
+@container-max-width: 2000px; //using other methods to limit width
+@content-max-width: 2000px;
+@border-radius: 0px;
+@section-padding-x: clamp(1rem, 6vw, 18rem); 
+@box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+@transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+// ===== CSS CUSTOM PROPERTIES =====
+// Light mode (default)
+:root,
+[data-theme="light"] {
+  /* Colors */
+  --color-primary: @color-primary-light;
+  --color-secondary: @color-secondary-light;
+  --color-accent: @color-accent-light;
+  --color-text: @color-text-light-mode;
+  --color-text-light: @color-text-light-secondary;
+  --color-background: @color-background-light;
+  --color-surface: @color-surface-light;
+  --color-border: @color-border-light;
+  --gradient-split: @gradient-split-light;
+  --color-button-text: @color-background-light;
+  --color-button-bg: @color-primary-light;
+
+  /* Typography */
+  --font-primary: @font-primary;
+  --font-secondary: @font-secondary;
+  --font-size-base: @font-size-base;
+  --font-size-small: @font-size-small;
+  --font-size-large: @font-size-large;
+  --font-size-xl: @font-size-xl;
+  --font-size-2xl: @font-size-2xl;
+  --font-size-3xl: @font-size-3xl;
+  --font-size-4xl: @font-size-4xl;
+  --line-height-base: @line-height-base;
+  --line-height-tight: @line-height-tight;
+
+  /* Spacing */
+  --spacing-xs: @spacing-xs;
+  --spacing-sm: @spacing-sm;
+  --spacing-md: @spacing-md;
+  --spacing-lg: @spacing-lg;
+  --spacing-xl: @spacing-xl;
+  --spacing-2xl: @spacing-2xl;
+
+  /* Layout */
+  --container-max-width: @container-max-width;
+  --content-max-width: @content-max-width;
+  --border-radius: @border-radius;
+  --box-shadow: @box-shadow;
+  --transition: @transition;
+}
+
+// Dark mode overrides
+[data-theme="dark"] {
+  /* Colors */
+  --color-primary: @color-primary-dark;
+  --color-secondary: @color-secondary-dark;
+  --color-accent: @color-secondary-dark;
+  --color-text: @color-text-dark;
+  --color-text-light: @color-text-dark-secondary;
+  --color-background: @color-background-dark;
+  --color-surface: @color-surface-dark;
+  --color-border: @color-border-dark;
+   --gradient-split: @gradient-split-dark;
+  --color-button-text: @color-background-dark;
+  --color-button-bg: @color-primary-dark;
+
+  /* Adjust shadows for dark mode */
+  --box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+}
+
+// Respect user's system preference
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    /* Colors */
+    --color-primary: @color-primary-dark;
+    --color-secondary: @color-secondary-dark;
+    --color-accent: @color-accent-dark;
+    --color-text: @color-text-dark;
+    --color-text-light: @color-text-dark-secondary;
+    --color-background: @color-background-dark;
+    --color-surface: @color-surface-dark;
+    --color-border: @color-border-dark;
+    --box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+  }
+}

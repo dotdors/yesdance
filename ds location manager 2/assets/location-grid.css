@@ -1,0 +1,240 @@
+/**
+ * Location Grid Styles
+ * DS Location Manager Plugin
+ * 
+ * Uses theme CSS custom properties for colors/typography
+ * Provides complete styling for portability
+ */
+
+/* ===== TWO-COLOR HEADING COMPONENT ===== */
+.ds-heading-split {
+  font-size: var(--font-size-3xl, 2rem);
+  font-weight: 900;
+  line-height: 1.2;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.ds-heading-split__primary {
+  color: var(--color-primary, #000);
+}
+
+.ds-heading-split__accent {
+  color: var(--color-accent, #e23b2a);
+}
+
+/* ===== SECTION HEADER ===== */
+.ds-location-grid-section {
+  padding: 3rem 0;
+}
+
+.ds-location-grid-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.ds-location-grid-subtitle {
+  font-size: var(--font-size-large, 1.125rem);
+  color: var(--color-text, #5a65a1);
+  margin-top: 0.5rem;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ===== LOCATION GRID ===== */
+.ds-location-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2rem;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ===== LOCATION CARD ===== */
+.ds-location-card {
+  position: relative;
+  border: 3px solid var(--color-border, #eda318);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--color-secondary, #fff);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.ds-location-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+.ds-location-card__link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+/* ===== CARD IMAGE ===== */
+.ds-location-card__image {
+  position: relative;
+  width: 100%;
+  height: 240px;
+  overflow: hidden;
+  background: var(--color-surface, #fbf5e4);
+}
+
+.ds-location-card__image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ds-location-card:hover .ds-location-card__image img {
+  transform: scale(1.05);
+}
+
+/* Placeholder when no image */
+.ds-location-card__placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 4rem;
+  opacity: 0.3;
+}
+
+/* ===== LOCATION PIN ICON ===== */
+.ds-location-card__pin {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 48px;
+  height: 48px;
+  background: var(--color-border, #eda318);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease;
+  z-index: 2;
+}
+
+.ds-location-card__pin svg {
+  width: 24px;
+  height: 24px;
+  color: var(--color-secondary, #fff);
+}
+
+.ds-location-card:hover .ds-location-card__pin {
+  transform: scale(1.1);
+}
+
+/* ===== CARD CONTENT ===== */
+.ds-location-card__content {
+  padding: 1.5rem;
+  background: var(--color-secondary, #fff);
+}
+
+.ds-location-card__title {
+  font-size: var(--font-size-xl, 1.25rem);
+  font-weight: 700;
+  color: var(--color-primary, #000);
+  margin: 0 0 0.25rem 0;
+  line-height: 1.3;
+}
+
+.ds-location-card__subtitle {
+  font-size: var(--font-size-small, 0.875rem);
+  color: var(--color-text-light, #666);
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+/* ===== MORE LINK ===== */
+.ds-location-grid__more {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.ds-location-grid__more-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: var(--font-size-base, 1rem);
+  font-weight: 600;
+  color: var(--color-text, #5a65a1);
+  text-decoration: none;
+  transition: all 0.3s ease;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+}
+
+.ds-location-grid__more-link:hover {
+  color: var(--color-accent, #e23b2a);
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.ds-location-grid__more-link svg {
+  width: 20px;
+  height: 20px;
+  transition: transform 0.3s ease;
+}
+
+.ds-location-grid__more-link:hover svg {
+  transform: translateX(4px);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .ds-location-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .ds-location-grid-section {
+    padding: 2rem 0;
+  }
+  
+  .ds-location-grid-header {
+    margin-bottom: 2rem;
+  }
+  
+  .ds-heading-split {
+    font-size: var(--font-size-2xl, 1.5rem);
+  }
+  
+  .ds-location-card__image {
+    height: 200px;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .ds-location-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ===== ACCESSIBILITY ===== */
+@media (prefers-reduced-motion: reduce) {
+  .ds-location-card,
+  .ds-location-card__image img,
+  .ds-location-card__pin,
+  .ds-location-grid__more-link svg {
+    transition: none;
+  }
+  
+  .ds-location-card:hover {
+    transform: none;
+  }
+  
+  .ds-location-card:hover .ds-location-card__image img {
+    transform: none;
+  }
+}

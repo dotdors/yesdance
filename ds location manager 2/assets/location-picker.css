@@ -1,0 +1,206 @@
+/**
+ * Location Picker - Red Capsule Split Button
+ * DS Location Manager Plugin
+ * 
+ * Structure:
+ * ┌─────────────────┬───┐
+ * │  Sample Location│ ▼ │  (red bg, white text, white divider)
+ * └─────────────────┴───┘
+ * 
+ * Click name = navigate to location page
+ * Click arrow = open dropdown to select different location
+ */
+
+/* ===== CONTAINER ===== */
+.location-picker {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* ===== SPLIT BUTTON CONTAINER ===== */
+.location-picker__split {
+  display: inline-flex;
+  align-items: stretch;
+  background: var(--color-accent, #e23b2a);
+  border-radius: 50px; /* Capsule shape */
+  overflow: hidden;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.location-picker:hover .location-picker__split {
+  background: color-mix(in srgb, var(--color-accent, #e23b2a) 85%, black);
+}
+
+/* Fallback for browsers without color-mix */
+@supports not (background: color-mix(in srgb, red 50%, black)) {
+  .location-picker:hover .location-picker__split {
+    filter: brightness(0.9);
+  }
+}
+
+/* ===== LOCATION LINK (Left Side) ===== */
+.location-picker__link {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  text-decoration: none;
+  color: var(--color-secondary, #fff);
+  font-weight: 600;
+  font-size: var(--font-size-small, 0.875rem);
+  transition: opacity 0.2s ease;
+}
+
+.location-picker__link:hover {
+  opacity: 0.9;
+  text-decoration: none;
+  color: var(--color-secondary, #fff);
+}
+
+.location-picker__current {
+  white-space: nowrap;
+}
+
+/* ===== WHITE DIVIDER LINE ===== */
+.location-picker__divider {
+  width: 1px;
+  background: rgba(255, 255, 255, 0.5);
+  margin: 0.375rem 0; /* Vertical margin so line doesn't touch top/bottom */
+}
+
+/* ===== DROPDOWN TOGGLE (Right Side) ===== */
+.location-picker__toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 0.875rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--color-secondary, #fff);
+  transition: opacity 0.2s ease;
+}
+
+.location-picker__toggle:hover {
+  opacity: 0.8;
+}
+
+.location-picker__arrow {
+  transition: transform 0.2s ease;
+}
+
+.location-picker.is-open .location-picker__arrow {
+  transform: rotate(180deg);
+}
+
+/* ===== DROPDOWN MENU ===== */
+.location-picker__dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  min-width: 200px;
+  background: var(--color-secondary, #fff);
+  border: 2px solid var(--color-accent, #e23b2a);
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px);
+  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+  z-index: 1000;
+  overflow: hidden;
+}
+
+.location-picker.is-open .location-picker__dropdown {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+/* ===== DROPDOWN ITEMS ===== */
+.location-picker__item {
+  display: block;
+  padding: 0.75rem 1rem;
+  text-decoration: none;
+  color: var(--color-text, #5a65a1);
+  font-size: var(--font-size-small, 0.875rem);
+  font-weight: 500;
+  transition: background-color 0.15s ease, color 0.15s ease;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.location-picker__item:last-child {
+  border-bottom: none;
+}
+
+.location-picker__item:hover,
+.location-picker__item:focus {
+  background: var(--color-accent, #e23b2a);
+  color: var(--color-secondary, #fff);
+  outline: none;
+}
+
+.location-picker__item.is-current {
+  color: var(--color-accent, #e23b2a);
+  font-weight: 700;
+  background: rgba(226, 59, 42, 0.08);
+}
+
+.location-picker__item.is-current:hover {
+  background: var(--color-accent, #e23b2a);
+  color: var(--color-secondary, #fff);
+}
+
+/* ===== FOCUS STYLES ===== */
+.location-picker__link:focus-visible {
+  outline: 2px solid var(--color-secondary, #fff);
+  outline-offset: -4px;
+  border-radius: 4px;
+}
+
+.location-picker__toggle:focus-visible {
+  outline: 2px solid var(--color-secondary, #fff);
+  outline-offset: -4px;
+  border-radius: 4px;
+}
+
+.location-picker__item:focus-visible {
+  outline: 2px solid var(--color-accent, #e23b2a);
+  outline-offset: -2px;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .location-picker__link {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8125rem;
+  }
+  
+  .location-picker__toggle {
+    padding: 0.5rem 0.625rem;
+  }
+  
+  .location-picker__dropdown {
+    min-width: 180px;
+  }
+}
+
+/* ===== ACCESSIBILITY ===== */
+@media (prefers-reduced-motion: reduce) {
+  .location-picker__dropdown,
+  .location-picker__arrow,
+  .location-picker__link,
+  .location-picker__toggle,
+  .location-picker__item,
+  .location-picker__split {
+    transition: none;
+  }
+}
+
+/* ===== MENU ITEM WRAPPER (in nav) ===== */
+.menu-item-location-picker {
+  display: flex;
+  align-items: center;
+  margin-left: 1rem;
+}

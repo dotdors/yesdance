@@ -1,0 +1,618 @@
+// out: false
+// ============================
+// _components.less
+// Project-specific component overrides and new components
+// ============================
+
+// ===== BUTTON MIXINS & CLASSES =====
+.button-base() {
+  background: var(--color-accent);
+  color: var(--color-secondary);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border-radius: @border-radius-pill;  // Pill style
+  font-weight: 700;
+  transition: var(--transition);
+  display: inline-block;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.85;
+    text-decoration: none;
+    transform: translateY(-1px);
+  }
+}
+
+.button {
+  .button-base();
+  
+  &--outline {
+    background: transparent;
+    border: 2px solid var(--color-accent);
+    color: var(--color-accent);
+    
+    &:hover {
+      background: var(--color-accent);
+      color: var(--color-secondary);
+    }
+  }
+  
+  &--large {
+    padding: var(--spacing-md) var(--spacing-xl);
+    font-size: var(--font-size-large);
+  }
+  
+  // Featured style - uses red accent
+  &--featured {
+    background: var(--color-accent);
+    color: var(--color-secondary);
+    box-shadow: 0 4px 14px rgba(226, 59, 42, 0.3);
+    
+    &:hover {
+      box-shadow: 0 6px 20px rgba(226, 59, 42, 0.4);
+    }
+  }
+}
+
+// ===== WORDPRESS BUTTON BLOCK =====
+.wp-block-button__link {
+  .button-base();
+}
+
+// Featured button style for WordPress editor
+.wp-block-button.is-style-featured .wp-block-button__link,
+.wp-block-button.has-custom-class-featured .wp-block-button__link {
+  background: var(--color-accent);
+  color: var(--color-secondary);
+  box-shadow: 0 4px 14px rgba(226, 59, 42, 0.3);
+  
+  &:hover {
+    box-shadow: 0 6px 20px rgba(226, 59, 42, 0.4);
+  }
+}
+
+// Outline style for WordPress
+.wp-block-button.is-style-outline .wp-block-button__link {
+  background: transparent;
+  border: 2px solid var(--color-accent);
+  color: var(--color-accent);
+  
+  &:hover {
+    background: var(--color-accent);
+    color: var(--color-secondary);
+  }
+}
+
+// ===== CARD MIXINS & CLASSES =====
+.card-base() {
+  background: var(--color-surface);
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  padding: var(--spacing-md);
+  transition: var(--transition);
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+  }
+}
+
+.card {
+  .card-base();
+  
+  &--flat {
+    box-shadow: none;
+    border: 1px solid var(--color-border);
+  }
+  
+  &--bordered {
+    border: 2px solid var(--color-accent);
+  }
+}
+
+// ===== BADGE MIXINS & CLASSES =====
+.badge-base() {
+  display: inline-block;
+  background: var(--color-accent);
+  color: var(--color-secondary);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: 4px;
+  .badge-text;
+}
+
+.badge {
+  .badge-base();
+  
+  &--secondary {
+    background: var(--color-surface);
+    color: var(--color-text);
+  }
+  
+  &--outline {
+    background: transparent;
+    border: 1px solid var(--color-accent);
+    color: var(--color-accent);
+  }
+}
+
+// ===== HEADER OVERRIDES =====
+.site-header {
+  border-bottom: none;
+  
+  &.scrolled {
+    background: var(--color-background);
+  }
+}
+
+.site-description {
+  display: none;
+}
+
+header#masthead {
+  background: var(--color-background);
+  padding-top: 1em;
+  padding-bottom: 1em;
+}
+
+// Logo overlay slide-up state
+body.opera-slide-up {
+  header#masthead {
+    background: var(--color-background);
+  }
+}
+
+// ===== NAVIGATION OVERRIDES =====
+.main-navigation a {
+  font-weight: 700;
+  font-size: var(--font-size-small);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  
+  &:hover,
+  .current-menu-item > & {
+    text-decoration: none;
+    color: var(--color-accent);
+  }
+}
+
+// ===== FOOTER OVERRIDES =====
+// Dark purple background with white text, gold accent for links
+.site-footer {
+  background: var(--color-purple-dark); // #38427a - dark purple
+  color: var(--color-secondary);        // #ffffff - white text
+  
+  // Override text colors within footer
+  p, span, div {
+    color: var(--color-secondary);
+  }
+  
+  // Links use gold accent for visibility on dark purple
+  a {
+    color: var(--color-gold); // #eda318 - gold
+    text-decoration: none;
+    transition: var(--transition);
+    
+    &:hover {
+      color: var(--color-secondary); // White on hover
+      text-decoration: underline;
+      opacity: 1;
+    }
+  }
+  
+  // Footer navigation
+  .footer-navigation {
+    ul {
+      list-style: none;
+      margin: 0 0 var(--spacing-lg);
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: var(--spacing-lg);
+    }
+    
+    a {
+      color: var(--color-gold); // Gold links
+      font-weight: 600;
+      
+      &:hover {
+        color: var(--color-secondary);
+      }
+    }
+  }
+  
+  // Site info / copyright
+  .site-info {
+    opacity: 0.85;
+    font-size: var(--font-size-small);
+    
+    p {
+      margin-bottom: 0;
+    }
+  }
+}
+
+// Homepage footer variant
+.home .site-footer {
+  margin-top: 0;
+}
+
+// ===== HEADER LOGO SVG STYLES =====
+.header-logo-link {
+  display: block;
+  line-height: 0;
+  
+  .header-logo-svg {
+    height: 40px;
+    width: auto;
+    display: block;
+    transition: var(--transition);
+    
+    path {
+      fill: var(--color-primary);
+      transition: fill 0.3s ease;
+    }
+  }
+  
+  &:hover .header-logo-svg path {
+    fill: var(--color-accent);
+  }
+}
+
+// Scrolled header variation
+.site-header.scrolled .header-logo-svg path {
+  fill: var(--color-primary);
+}
+
+// Mobile size adjustment
+@media (max-width: 768px) {
+  .header-logo-link .header-logo-svg {
+    height: 32px;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-logo-link .header-logo-svg {
+    height: 28px;
+  }
+}
+
+// ===== SECTION PATTERNS =====
+.section-base() {
+  padding: var(--spacing-2xl) @section-padding-x;
+  
+  @media (max-width: 768px) {
+    padding: var(--spacing-xl) @section-padding-x;
+  }
+}
+
+.section-alt-bg() {
+  background: var(--color-surface);
+}
+
+.section-compact() {
+  padding: var(--spacing-xl) 0;
+  
+  @media (max-width: 768px) {
+    padding: var(--spacing-lg) 0;
+  }
+}
+
+// Actual classes for WordPress Group blocks
+.wp-block-group {
+  &.full-section {
+    .section-base();
+  }
+  
+  &.is-style-section-standard {
+    .section-base();
+    background: var(--color-background);  // White
+  }
+  
+  &.is-style-section-alt {
+    .section-base();
+    .section-alt-bg();  // Cream/surface
+  }
+  
+  &.is-style-section-bleed {
+    .bleed-section();
+    background: var(--color-background);  // White default
+  }
+  
+  &.is-style-section-compact {
+    .section-compact();
+    background: var(--color-background);  // White
+  }
+}
+
+// ===== BLEED SECTION PATTERN =====
+.bleed-section() {
+  padding: 0;
+  
+  > .container {
+    padding: 0;
+    max-width: none;
+  }
+  
+  [class*="__grid"],
+  [class*="__inner"] {
+    gap: 0;
+  }
+  
+  // WordPress Columns block compatibility
+  .wp-block-columns {
+    gap: 0 !important;
+    margin: 0;
+    align-items: stretch !important;
+  }
+  
+  .wp-block-column {
+    margin: 0;
+    padding: 0;
+    
+    &.grid-content,
+    &.grid-media {
+      flex-basis: 0 !important;
+      flex-grow: 1 !important;
+    }
+    
+    &.grid-media {
+      display: flex !important;
+      flex-direction: column !important;
+    }
+  }
+  
+  // Content columns
+  .grid-content {
+    padding: var(--spacing-2xl);
+    
+    &:first-child {
+      padding-left: @section-padding-x;
+      padding-right: var(--spacing-2xl);
+    }
+    
+    &:last-child {
+      padding-right: @section-padding-x;
+      padding-left: var(--spacing-2xl);
+    }
+    
+    @media (max-width: 768px) {
+      padding: var(--spacing-lg) @section-padding-x;
+    }
+  }
+  
+  // Media columns (full bleed)
+  .grid-media {
+    padding: 0 !important;
+    
+    figure,
+    .wp-block-image {
+      flex: 1 !important;
+      height: 100%;
+      display: flex !important;
+      margin: 0 !important;
+      
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        flex: 1;
+      }
+    }
+    
+    img, video, iframe, > div {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      margin: 0;
+    }
+  }
+}
+
+// ===== PAGE LAYOUT =====
+#page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.site-main {
+  flex: 1;
+  padding-top: 0;
+}
+
+// Homepage-specific spacing
+.home .site-main {
+  padding-bottom: 0;
+}
+
+// ===== THEME TOGGLE (HIDDEN FOR NOW) =====
+// Uncomment when dark mode is re-enabled
+.theme-toggle {
+  display: none;  // Hide until dark mode is ready
+}
+
+// ===== IMAGE COMPONENTS =====
+.image-container {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--border-radius);
+  
+  img {
+    width: 100%;
+    height: auto;
+    display: block;
+    transition: var(--transition);
+  }
+  
+  &:hover img {
+    transform: scale(1.05);
+  }
+}
+
+// ===== META INFO MIXINS & CLASSES =====
+.meta-info-base() {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+  align-items: center;
+  .text-meta;
+}
+
+.meta-info {
+  .meta-info-base();
+}
+
+// ===== SECTION TITLE MIXINS & CLASSES =====
+.section-title-base() {
+  font-size: var(--font-size-3xl);
+  color: var(--color-primary);
+  font-weight: 900;
+  margin-bottom: var(--spacing-lg);
+}
+
+.section-title-centered() {
+  text-align: center;
+}
+
+.section-title-underline() {
+  position: relative;
+  padding-bottom: var(--spacing-sm);
+  
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 60px;
+    height: 4px;
+    background: var(--color-accent);
+  }
+}
+
+.section-title-underline-centered() {
+  .section-title-underline();
+  
+  &::after {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
+// Actual classes for HTML use
+.section-title {
+  .section-title-base();
+  
+  &--centered {
+    .section-title-centered();
+  }
+  
+  &--underline {
+    .section-title-underline();
+  }
+  
+  &--centered.section-title--underline {
+    .section-title-underline-centered();
+  }
+}
+
+// Container padding for header/footer
+.site-header .container,
+.site-footer .container {
+  padding: 0 var(--spacing-xl);
+}
+
+// ===== BLOCKQUOTE STYLING =====
+blockquote,
+.wp-block-quote {
+  position: relative;
+  padding: var(--spacing-xl) var(--spacing-2xl);
+  margin: var(--spacing-xl) 0;
+  font-style: italic;
+  border-left: none;
+  text-align: center;
+  
+  // Large decorative opening quote mark
+  &::before {
+    content: "\201C";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 5rem;
+    line-height: 1;
+    color: var(--color-gold);
+    font-style: normal;
+    font-family: Georgia, serif;
+    opacity: 0.6;
+  }
+  
+  p {
+    font-size: var(--font-size-xl);
+    line-height: 1.6;
+    margin-bottom: var(--spacing-sm);
+    color: var(--color-text);
+    position: relative;
+    z-index: 1;
+  }
+  
+  cite {
+    display: block;
+    font-size: var(--font-size-base);
+    font-style: normal;
+    font-weight: 700;
+    color: var(--color-primary);
+    margin-top: var(--spacing-md);
+    
+    &::before {
+      content: "— ";
+    }
+  }
+}
+
+// ===== ACCESSIBILITY =====
+// Respect user's motion preferences
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+// Focus visible - only show focus ring for keyboard navigation
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+// Specific focus styles for interactive elements
+.main-navigation a:focus-visible,
+.button:focus-visible,
+.wp-block-button__link:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+// ===== STRETCHY PARAGRAPH STYLE =====
+.wp-block-paragraph.is-style-stretchy {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  justify-content: space-between;
+  min-height: 100%;
+}
+
+// Fix for columns so stretchy text actually fills the column
+.wp-block-column {
+  display: flex;
+  flex-direction: column;
+}
