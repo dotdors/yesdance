@@ -1,0 +1,135 @@
+// ============================
+// editor-style.less
+// Block editor-specific styling
+// ============================
+// This file styles blocks as they appear in the WordPress editor
+// Compile to editor-style.css
+
+// Import variables for consistency
+@import "_variables.less";
+
+// ===== SECTION BLOCK STYLES =====
+// Visual indicators for custom section styles in the editor
+
+.wp-block-group {
+  // Base styling for all section styles
+  &.is-style-section-standard,
+  &.is-style-section-alt,
+  &.is-style-section-bleed,
+  &.is-style-section-compact {
+    border: 2px dashed rgba(0, 0, 0, 0.15);
+    padding: 1rem;
+    margin: 1.5rem 0;
+    position: relative;
+    
+    // Add a label so editors know which style is applied
+    &::before {
+      content: attr(class);
+      position: absolute;
+      top: -10px;
+      left: 1rem;
+      background: white;
+      padding: 0 0.5rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: rgba(0, 0, 0, 0.5);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+  }
+  
+  // Standard section
+  &.is-style-section-standard {
+    border-color: rgba(0, 100, 200, 0.3);
+    
+    &::before {
+      content: "Standard Section";
+      color: rgb(0, 100, 200);
+    }
+  }
+  
+  // Alternate section (different background)
+  &.is-style-section-alt {
+    border-color: rgba(100, 0, 200, 0.3);
+    background: rgba(100, 0, 200, 0.05);
+    
+    &::before {
+      content: "Alternate Section";
+      color: rgb(100, 0, 200);
+    }
+  }
+  
+  // Bleed section (edge-to-edge)
+  &.is-style-section-bleed {
+    border-color: rgba(200, 100, 0, 0.3);
+    border-style: solid;
+    
+    &::before {
+      content: "Bleed Section (Edge-to-Edge)";
+      color: rgb(200, 100, 0);
+    }
+  }
+  
+  // Compact section
+  &.is-style-section-compact {
+    border-color: rgba(0, 150, 100, 0.3);
+    
+    &::before {
+      content: "Compact Section";
+      color: rgb(0, 150, 100);
+    }
+  }
+}
+
+// ===== HELPER CLASSES FOR BLEED SECTIONS =====
+// Show visual indicators for grid-content and grid-media in editor
+
+.grid-content {
+  border: 1px dashed rgba(0, 100, 200, 0.3);
+  padding: 1rem;
+  position: relative;
+  
+  &::before {
+    content: "Content Column";
+    position: absolute;
+    top: -10px;
+    left: 1rem;
+    background: white;
+    padding: 0 0.25rem;
+    font-size: 0.7rem;
+    color: rgba(0, 100, 200, 0.7);
+  }
+}
+
+.grid-media {
+  border: 1px dashed rgba(200, 100, 0, 0.3);
+  min-height: 200px;
+  position: relative;
+  
+  &::before {
+    content: "Media Column (Full Bleed)";
+    position: absolute;
+    top: -10px;
+    left: 1rem;
+    background: white;
+    padding: 0 0.25rem;
+    font-size: 0.7rem;
+    color: rgba(200, 100, 0, 0.7);
+  }
+}
+
+// ===== GENERAL EDITOR IMPROVEMENTS =====
+// Make editor more closely match frontend
+
+.editor-styles-wrapper {
+  font-family: var(--font-primary);
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 900;
+    color: var(--color-primary);
+  }
+  
+  a {
+    color: var(--color-accent);
+  }
+}

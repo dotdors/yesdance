@@ -1,0 +1,121 @@
+/* CSS for Homepage Logo Overlay */
+/* Base styles for both modes */
+
+:root {
+  --logo-overlay-dark: var(--color-background, #38427A);
+}
+
+.opera-logo-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none; /* Allows interaction to pass through to trigger the shrink */
+  transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* ===== CENTER MODE (Original) ===== */
+.opera-logo-overlay.opera-logo-center {
+  background: rgba(20, 20, 20, 0.3); /* Subtle dark overlay */
+  backdrop-filter: blur(2px);
+}
+
+.opera-logo-overlay.opera-logo-center.hidden {
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(0.3);
+}
+
+/* ===== SLIDE-UP MODE (New) ===== */
+.opera-logo-overlay.opera-logo-slide-up {
+  background: var(--logo-overlay-dark);
+  height: 50vh; /* Only cover top half */
+  align-items: center; /* Center logo within the top half */
+}
+
+.opera-logo-overlay.opera-logo-slide-up.hidden {
+  transform: translateY(-100%); /* Slide up and out of view */
+  opacity: 1; /* Keep it opaque while sliding */
+}
+
+/* Logo container styles */
+.opera-logo-overlay .logo-container {
+  width: 50vw;
+  height: auto;
+  max-width: 600px;
+  min-width: 300px;
+  transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.3));
+}
+
+/* Slide-up mode specific logo sizing */
+.opera-logo-overlay.opera-logo-slide-up .logo-container {
+  width: 40vw; /* Slightly smaller for the top-half space */
+  max-width: 500px;
+}
+
+.opera-logo-overlay .logo-container svg,
+.opera-logo-overlay .logo-container img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Body classes for overflow control */
+body.opera-homepage {
+  overflow: hidden; /* Prevent scrolling during logo display */
+}
+
+body.opera-homepage.logo-hidden {
+  overflow: auto; /* Restore scrolling after logo hides */
+}
+
+/* Logo entrance animation */
+@keyframes logoEntrance {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.opera-logo-overlay .logo-container {
+  animation: logoEntrance 1s ease-out 0.2s both;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .opera-logo-overlay.opera-logo-center .logo-container {
+    width: 70vw;
+    max-width: 400px;
+    min-width: 250px;
+  }
+  
+  .opera-logo-overlay.opera-logo-slide-up .logo-container {
+    width: 60vw;
+    max-width: 350px;
+    min-width: 200px;
+  }
+}
+
+@media (max-width: 480px) {
+  .opera-logo-overlay.opera-logo-center .logo-container {
+    width: 80vw;
+    max-width: 300px;
+    min-width: 200px;
+  }
+  
+  .opera-logo-overlay.opera-logo-slide-up .logo-container {
+    width: 70vw;
+    max-width: 250px;
+    min-width: 180px;
+  }
+}

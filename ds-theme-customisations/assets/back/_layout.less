@@ -1,0 +1,122 @@
+// out: false
+// ============================
+// _layout.less
+// Project-specific layout utilities and overrides
+// ============================
+
+.gradient-bg {
+  background: var(--gradient-split);
+}
+
+// ===== CONTAINER OVERRIDES =====
+// Jane provides .container and .content-wrapper
+// 
+// STRATEGY: Default padding on containers, sections "break out" to go full-width
+// This ensures regular pages/posts have margins while sections can bleed edge-to-edge
+
+.container {
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  padding: 0 @section-padding-x;
+}
+
+// ===== ENTRY CONTENT =====
+// Default content area styling for pages/posts without sections
+// Sections handle their own internal padding and break out of this
+
+.entry-content {
+  // Sections break out of container padding to go full-width
+  // They handle their own internal padding via .section-base() and .bleed-section()
+  > .wp-block-group.full-section,
+  > .wp-block-group[class*="is-style-section"] {
+    margin-left: calc(-1 * @section-padding-x);
+    margin-right: calc(-1 * @section-padding-x);
+    width: calc(100% + (2 * @section-padding-x));
+    max-width: none;
+  }
+  
+  // Cover blocks can also go full-width
+  > .wp-block-cover.alignfull,
+  > .wp-block-image.alignfull,
+  > .wp-block-video.alignfull {
+    margin-left: calc(-1 * @section-padding-x);
+    margin-right: calc(-1 * @section-padding-x);
+    width: calc(100% + (2 * @section-padding-x));
+    max-width: none;
+  }
+}
+
+// ===== GRID UTILITIES =====
+// Jane provides .grid, .grid-2, .grid-3
+// Add project-specific grid patterns
+
+.grid {
+  display: grid;
+  gap: var(--spacing-lg);
+}
+
+.grid-4 {
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+// ===== FLEX UTILITIES =====
+// Jane provides .flex, .flex-center, .flex-between, .flex-wrap
+
+.flex {
+  display: flex;
+  gap: var(--spacing-md);
+}
+
+.flex-center {
+  justify-content: center;
+  align-items: center;
+}
+
+.flex-column {
+  flex-direction: column;
+}
+
+.flex-gap-sm {
+  gap: var(--spacing-sm);
+}
+
+.flex-gap-lg {
+  gap: var(--spacing-lg);
+}
+
+// ===== SECTION PATTERNS =====
+// Reusable section layouts
+
+.section {
+  padding: var(--spacing-2xl) 0;
+  
+  &--compact {
+    padding: var(--spacing-xl) 0;
+  }
+  
+  &--spacious {
+    padding: var(--spacing-2xl) 0 var(--spacing-2xl);
+  }
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: var(--spacing-xl);
+  
+  &--left {
+    text-align: left;
+  }
+}
+
+// ===== RESPONSIVE UTILITIES =====
+@media (max-width: 768px) {
+  .hide-mobile {
+    display: none;
+  }
+}
+
+@media (min-width: 769px) {
+  .hide-desktop {
+    display: none;
+  }
+}

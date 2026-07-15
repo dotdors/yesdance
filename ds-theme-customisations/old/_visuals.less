@@ -1,0 +1,175 @@
+// out: false
+// ============================
+// _visuals.less
+// Full-height section styling with solid backgrounds
+// ============================
+
+/* Smooth scrolling for the entire page */
+html {
+  scroll-behavior: smooth;
+}
+
+/* The scroll container - HOMEPAGE ONLY */
+// Scoped to .home to prevent scroll-snap on regular pages/posts
+.home .entry-content.content-wrapper {
+  height: 100vh;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+  scroll-snap-stop: always;
+}
+
+/* Each full-height section */
+.wp-block-group.full-section {
+  //height: 100vh;
+  scroll-snap-align: start;
+  position: relative;
+  display: flex;
+  flex-direction: column;  // ADDED: Stack content vertically by default
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  color: var(--color-text);
+  font-size: 2rem;
+}
+
+/* Background layer */
+.wp-block-group.full-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+// ============================
+// Section Background Gradients
+// Using color-mix() for dynamic, subtle variations
+// ============================
+
+/* ===== SECTION BACKGROUNDS (Dynamic Gradients) ===== */
+.trans {
+  background: transparent;
+  color: var(--color-secondary) !important;
+  
+  h1, h2, h3, h4, h5, h6 {
+    color: var(--color-secondary) !important;
+  }
+}
+
+/* Section 1: Transparent (no background) */
+.wp-block-group.full-section:nth-child(1)::before {
+  .trans;
+}
+
+/* Section 2: Subtle warm gradient from surface color */
+.wp-block-group.full-section:nth-child(2)::before {
+  background: linear-gradient(135deg, 
+    color-mix(in srgb, var(--color-surface) 90%, var(--color-accent) 10%), 
+    color-mix(in srgb, var(--color-surface) 85%, var(--color-secondary) 15%)
+  );
+}
+
+/* Section 3: Cool tinted gradient from background */
+.wp-block-group.full-section:nth-child(3)::before {
+  background: linear-gradient(135deg, 
+    color-mix(in srgb, var(--color-background) 95%, var(--color-primary) 5%), 
+    color-mix(in srgb, var(--color-background) 90%, var(--color-surface) 10%)
+  );
+}
+
+/* Section 4: Deep surface gradient */
+.wp-block-group.full-section:nth-child(4)::before {
+  background: linear-gradient(135deg, 
+    color-mix(in srgb, var(--color-surface) 80%, var(--color-primary) 20%), 
+    color-mix(in srgb, var(--color-surface) 90%, var(--color-accent) 10%)
+  );
+}
+
+/* Section 5: Bright accent-infused gradient */
+.wp-block-group.full-section:nth-child(5)::before {
+  background: linear-gradient(135deg, 
+    color-mix(in srgb, var(--color-background) 85%, var(--color-accent) 15%), 
+    color-mix(in srgb, var(--color-surface) 80%, var(--color-secondary) 20%)
+  );
+}
+
+/* Section 6: Secondary color gradient */
+.wp-block-group.full-section:nth-child(6)::before {
+  background: linear-gradient(135deg, 
+    color-mix(in srgb, var(--color-surface) 85%, var(--color-secondary) 15%), 
+    color-mix(in srgb, var(--color-background) 90%, var(--color-accent) 10%)
+  );
+}
+
+/* Section 7: Accent-forward gradient */
+.wp-block-group.full-section:nth-child(7)::before {
+  background: linear-gradient(135deg, 
+    color-mix(in srgb, var(--color-accent) 20%, var(--color-background) 80%), 
+    color-mix(in srgb, var(--color-accent) 15%, var(--color-surface) 85%)
+  );
+}
+
+/* Section 8+: Cycle through subtle variations */
+.wp-block-group.full-section:nth-child(8)::before {
+  background: linear-gradient(135deg, 
+    color-mix(in srgb, var(--color-surface) 92%, var(--color-primary) 8%), 
+    color-mix(in srgb, var(--color-background) 88%, var(--color-secondary) 12%)
+  );
+}
+
+/* ===== FALLBACK FOR OLDER BROWSERS ===== */
+/* If color-mix() is not supported, use solid surface color */
+@supports not (background: color-mix(in srgb, white, black)) {
+  .wp-block-group.full-section:nth-child(n+2)::before {
+    background: var(--color-surface);
+  }
+  
+  /* Alternate between surface and background */
+  .wp-block-group.full-section:nth-child(odd)::before {
+    background: var(--color-surface);
+  }
+  
+  .wp-block-group.full-section:nth-child(even)::before {
+    background: var(--color-background);
+  }
+}
+
+.video-spacer {
+  height: auto !important;
+  pointer-events: auto !important;
+}
+
+.homepage-article .entry-header {
+  display: none;
+}
+
+.home .homepage-article {
+  padding: 0;
+}
+
+/* ===== RESPONSIVE ADJUSTMENTS ===== */
+@media (max-width: 768px) {
+  .wp-block-group.full-section {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .wp-block-group.full-section {
+    font-size: 1.25rem;
+  }
+}
+
+/* ===== ACCESSIBILITY ===== */
+/* Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  
+  .home .entry-content.content-wrapper {
+    scroll-snap-type: none;
+  }
+}

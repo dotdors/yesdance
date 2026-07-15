@@ -1,0 +1,72 @@
+// assets/home.js
+// Simplified JavaScript - just test the basics
+
+console.log('HOME.JS FILE LOADED!');
+alert('Home JS is working!');
+console.log('HOME.JS FILE LOADED!');
+
+// Debug element selection
+const body = document.body;
+console.log('Body classes:', body.className);
+console.log('Is homepage?', body.classList.contains('home'));
+
+const menuToggle = document.querySelector('.mobile-menu-toggle');
+console.log('Menu toggle element:', menuToggle);
+
+const header = document.querySelector('.site-header');
+console.log('Header element:', header);
+
+const logo = document.querySelector('.custom-logo-link');
+console.log('Logo element:', logo);
+
+// Test CSS
+if (logo) {
+    console.log('Logo computed styles:', window.getComputedStyle(logo));
+}
+
+(function() {
+    'use strict';
+
+    // Only run on homepage
+    if (!document.body.classList.contains('home')) {
+        return;
+    }
+
+    const menuToggle = document.querySelector('.mobile-menu-toggle');
+    const header = document.querySelector('.site-header');
+    let isVisible = false;
+
+    // Simple toggle function
+    function toggleHeader() {
+        console.log('Toggle clicked, current state:', isVisible);
+        
+        if (isVisible) {
+            // Hide header, show big logo
+            header.classList.remove('header-visible');
+            document.body.classList.remove('header-visible');
+            isVisible = false;
+            console.log('Header hidden');
+        } else {
+            // Show header, return logo to normal
+            header.classList.add('header-visible');
+            document.body.classList.add('header-visible');
+            isVisible = true;
+            console.log('Header visible');
+        }
+    }
+
+    // Add click handler
+    if (menuToggle) {
+        menuToggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            toggleHeader();
+        });
+        console.log('Menu toggle found and click handler added');
+    } else {
+        console.log('Menu toggle NOT found');
+    }
+
+    // Debug: log initial state
+    console.log('Script loaded, header:', header, 'toggle:', menuToggle);
+
+})();

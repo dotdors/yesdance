@@ -1,0 +1,304 @@
+// out: false
+// ============================
+// _locations.less
+// Location plugin template styling
+// ============================
+// This file styles the DS Location Manager plugin templates
+// by extending existing theme components and patterns using mixins
+.ds-location-hero {
+  .section-base();
+  .bleed-section(); 
+  .gradient-bg;
+}
+
+.ds-location-news {
+  .section-base();
+  .section-alt-bg();
+}
+
+.ds-location-program {
+  .section-base();
+}
+
+.ds-location-details {
+  .section-base();
+  .section-alt-bg();
+  .bleed-section(); // Special case
+}
+
+.ds-location-content {
+  .section-base();
+}
+// ===== HERO SECTION =====
+.ds-location-hero {
+  
+  // Inner grid container - must be display: grid or flex with equal columns
+  &__inner {
+    display: flex;
+    gap: 0;
+    align-items: stretch; // Makes columns equal height
+    min-height: 500px; // Minimum height so image has space to fill
+    
+    @media (max-width: 768px) {
+      flex-direction: column;
+      min-height: auto;
+    }
+  }
+  
+  // Left content column
+  &__left.grid-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  
+  // Right media column - CRITICAL: must be flex with flex-grow
+  &__right.grid-media {
+    flex: 1;
+    display: flex !important;
+    align-items: stretch;
+  }
+  
+  // Title uses h1 styling from Jane
+  &__title {
+    // Inherits h1 styles from base theme
+    margin-bottom: var(--spacing-md);
+    text-transform: uppercase
+  }
+  
+  // City name - use subtitle pattern
+  &__city {
+    .text-subtitle; // From _typography.less
+    //color: var(--color-text-light);
+     color: var(--color-accent); 
+  }
+  
+  // Short description/tagline
+  &__description {
+    font-size: var(--font-size-large);
+    color: var(--color-text-light);
+    margin-top: var(--spacing-sm);
+  }
+  
+  // Logo image
+  &__logo img {
+    max-width: 200px;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+    width: 100%;
+   height: 100%;
+    object-fit: cover; // Makes it fill the space
+
+  }
+  
+  // Hero image - will fill the flex container
+  &__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    flex: 1; // Grow to fill parent
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+  }
+}
+
+// ===== NEWS SECTION =====
+.ds-location-news {
+
+  
+  // Section header - use mixins for flexibility
+  &__header {
+    .section-title-base();
+    .section-title-centered();
+    .section-title-underline-centered();
+  }
+  
+  // Individual news item - extends card
+  &__item {
+    .card-base(); // From _components.less
+    display: flex;
+    flex-direction: column;
+  }
+  
+  // Sticky post modifier
+  &__item--sticky {
+    border: 2px solid var(--color-accent);
+    position: relative;
+  }
+  
+  // Featured badge
+  &__sticky-badge {
+    .badge-base(); // From _components.less
+  }
+  
+  // Post thumbnail
+  &__thumbnail {
+    margin-bottom: var(--spacing-md);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    
+    img {
+      width: 100%;
+      height: auto;
+      transition: var(--transition);
+    }
+  }
+  
+  &__item:hover &__thumbnail img {
+    transform: scale(1.05);
+  }
+  
+  // Post content wrapper
+  &__content {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+  }
+  
+  // Post title
+  &__title {
+    font-size: var(--font-size-xl);
+    color: var(--color-primary);
+    margin-bottom: var(--spacing-sm);
+    font-weight: 700;
+    
+    a {
+      color: var(--color-primary);
+      text-decoration: none;
+      
+      &:hover {
+        color: var(--color-accent);
+      }
+    }
+  }
+  
+  // Post excerpt
+  &__excerpt {
+    flex-grow: 1;
+    margin-bottom: var(--spacing-md);
+    color: var(--color-text-light);
+  }
+  
+  // Meta info (date, etc.)
+  &__meta {
+    .meta-info-base(); // From _components.less
+  }
+}
+
+// ===== PROGRAM SECTION =====
+.ds-location-program {
+
+  
+  &__header {
+    .section-title-base();
+    .section-title-underline();
+  }
+  
+  &__description {
+    max-width: var(--content-max-width);
+    font-size: var(--font-size-large);
+    line-height: var(--line-height-base);
+    color: var(--color-text-light);
+  }
+}
+
+// ===== DETAILS SECTION =====
+
+.ds-location-details {
+
+ 
+  &__header {
+    .section-title-base();
+    .section-title-centered();
+    .section-title-underline-centered();
+  }
+  
+  // Contact info column
+  &__contact {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+  
+  &__contact-item {
+    strong {
+      display: block;
+      margin-bottom: var(--spacing-xs);
+      color: var(--color-primary);
+      font-weight: 700;
+    }
+    
+    address {
+      font-style: normal;
+      color: var(--color-text-light);
+    }
+    
+    a {
+      color: var(--color-accent);
+      
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+  
+  // Map container
+  &__map-container {
+    width: 100%;
+    height: 100%;
+    height: 400px;
+    min-height: 300px;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: var(--box-shadow);
+  }
+}
+
+// ===== CONTENT SECTION =====
+// Block editor content area
+.ds-location-content {
+
+  
+  &__inner {
+    max-width: var(--content-max-width);
+    margin: 0 auto;
+    
+    // Standard block editor content styling
+    p {
+      margin-bottom: var(--spacing-md);
+    }
+    
+    h2, h3, h4 {
+      margin-top: var(--spacing-lg);
+      margin-bottom: var(--spacing-md);
+    }
+    
+    ul, ol {
+      margin-bottom: var(--spacing-md);
+      padding-left: var(--spacing-lg);
+    }
+  }
+}
+
+// ===== RESPONSIVE ADJUSTMENTS =====
+@media (max-width: 768px) {
+  .ds-location-hero {
+    &__logo img {
+      max-width: 150px;
+    }
+  }
+  
+  .ds-location-details {
+    &__map-container {
+      height: 300px;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .ds-location-hero {
+    &__logo img {
+      max-width: 120px;
+    }
+  }
+}

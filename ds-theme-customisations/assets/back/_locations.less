@@ -1,0 +1,406 @@
+// out: false
+// ============================
+// _locations.less
+// Location plugin template styling
+// ============================
+// This file styles the DS Location Manager plugin templates
+// by extending existing theme components and patterns using mixins
+
+// ===== HERO CURVE CONFIGURATION =====
+// Adjust these CSS custom properties to change the curve appearance:
+// --hero-curve-intensity: Controls how deep the curve dips (default: 80)
+//                         Higher = deeper curve, 0 = straight line
+// --hero-overlay-color: The overlay color (default: --color-surface)
+
+.ds-location-hero {
+  .section-base();
+  .bleed-section();
+  position: relative;
+  overflow: hidden;
+  
+  // CSS Custom Properties for configuration
+  --hero-curve-intensity: 80; // How deep the curve dips (in SVG units)
+  --hero-overlay-color: var(--color-surface, #fbf5e4);
+  --hero-overlay-opacity: 0.7; // Adjust transparency (0 = invisible, 1 = solid)
+  
+  // Section background is the TOP color (white/light)
+  background: var(--color-background, #fff);
+}
+
+.ds-location-news {
+  .section-base();
+  .section-alt-bg();
+}
+
+.ds-location-program {
+  .section-base();
+}
+
+.ds-location-details {
+  .section-base();
+  .section-alt-bg();
+  .bleed-section(); // Special case
+}
+
+.ds-location-content {
+  .section-base();
+}
+
+// ===== HERO SECTION =====
+.ds-location-hero {
+  
+  // Curved overlay - BETWEEN text and image
+  // Text (left) is ABOVE overlay - stays crisp
+  // Image (right) is BELOW overlay - gets tinted
+  &__overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    z-index: 2; // Middle layer
+    pointer-events: none;
+    
+    svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+    }
+  }
+  
+  &__overlay-shape {
+    fill: var(--hero-overlay-color);
+    fill-opacity: var(--hero-overlay-opacity, 0.7);
+    
+    // DEBUG: Uncomment to see overlay shape clearly
+    // fill: red;
+    // fill-opacity: 0.5;
+  }
+  
+  // Container
+  .container {
+    position: relative;
+  }
+  
+  // Inner grid container
+  &__inner {
+    display: flex;
+    gap: 0;
+    align-items: stretch;
+    min-height: 500px;
+    
+    @media (max-width: 768px) {
+      flex-direction: column;
+      min-height: auto;
+    }
+  }
+  
+  // Left content column - ABOVE overlay
+  &__left.grid-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    z-index: 3; // Above overlay
+  }
+  
+  // Right media column - BELOW overlay (gets tinted)
+  &__right.grid-media {
+    flex: 1;
+    display: flex !important;
+    align-items: stretch;
+    position: relative;
+    z-index: 1; // Below overlay
+  }
+  
+  // Title
+  &__title {
+    margin-bottom: var(--spacing-md);
+    text-transform: uppercase;
+  }
+  
+  // City name
+  &__city {
+    .text-subtitle;
+    color: var(--color-accent); 
+  }
+  
+  // Short description
+  &__description {
+    font-size: var(--font-size-large);
+    color: var(--color-text-light);
+    margin-top: var(--spacing-sm);
+  }
+  
+  // Logo image
+  &__logo img {
+    max-width: 200px;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+  }
+  
+  // Hero image
+  &__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    flex: 1;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+  }
+}
+
+// ===== NEWS SECTION =====
+.ds-location-news {
+
+  
+  // Section header - use mixins for flexibility
+  &__header {
+    .section-title-base();
+    .section-title-centered();
+    .section-title-underline-centered();
+  }
+  
+  // Individual news item - extends card
+  &__item {
+    .card-base(); // From _components.less
+    display: flex;
+    flex-direction: column;
+  }
+  
+  // Sticky post modifier
+  &__item--sticky {
+    border: 2px solid var(--color-accent);
+    position: relative;
+  }
+  
+  // Featured badge
+  &__sticky-badge {
+    .badge-base(); // From _components.less
+  }
+  
+  // Post thumbnail
+  &__thumbnail {
+    margin-bottom: var(--spacing-md);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    
+    img {
+      width: 100%;
+      height: auto;
+      transition: var(--transition);
+    }
+  }
+  
+  &__item:hover &__thumbnail img {
+    transform: scale(1.05);
+  }
+  
+  // Post content wrapper
+  &__content {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+  }
+  
+  // Post title
+  &__title {
+    font-size: var(--font-size-xl);
+    color: var(--color-primary);
+    margin-bottom: var(--spacing-sm);
+    font-weight: 700;
+    
+    a {
+      color: var(--color-primary);
+      text-decoration: none;
+      
+      &:hover {
+        color: var(--color-accent);
+      }
+    }
+  }
+  
+  // Post excerpt
+  &__excerpt {
+    flex-grow: 1;
+    margin-bottom: var(--spacing-md);
+    color: var(--color-text-light);
+  }
+  
+  // Meta info (date, etc.)
+  &__meta {
+    .meta-info-base(); // From _components.less
+  }
+}
+
+// ===== PROGRAM SECTION =====
+.ds-location-program {
+
+  
+  &__header {
+    .section-title-base();
+  }
+  
+  &__description {
+    max-width: var(--content-max-width);
+    font-size: var(--font-size-large);
+    line-height: var(--line-height-base);
+    color: var(--color-text-light);
+  }
+}
+
+// ===== DETAILS SECTION =====
+
+.ds-location-details {
+  
+  // Main heading: "Contact Us" with accent on "Contact"
+  &__heading {
+    .section-title-base();
+    margin-bottom: var(--spacing-md);
+  }
+  
+  &__heading-accent {
+    color: var(--color-accent);
+  }
+  
+  // Intro text
+  &__intro {
+    color: var(--color-text-light, #000);
+    font-size: var(--font-size-large);
+    margin-bottom: var(--spacing-lg);
+    
+    strong {
+      color: var(--color-primary);
+    }
+  }
+  
+  // Contact column container
+  &__contact {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+  
+  // Group containers (Find Us, Get In Touch)
+  &__group {
+    margin-bottom: var(--spacing-lg);
+  }
+  
+  // Subheadings: "FIND US", "GET IN TOUCH"
+  &__subheading {
+    font-size: var(--font-size-small);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-accent);
+    margin-bottom: var(--spacing-sm);
+  }
+  
+  // Location name
+  &__name {
+    font-weight: 700;
+    font-size: var(--font-size-large);
+    color: var(--color-primary);
+    margin-bottom: var(--spacing-xs);
+  }
+  
+  // Address
+  &__address {
+    font-style: normal;
+    color: var(--color-text-light, #000);
+    line-height: 1.6;
+  }
+  
+  // Contact items (contact person, phone, email)
+  &__item {
+    color: var(--color-text-light, #000);
+    margin-bottom: var(--spacing-xs);
+    
+    a {
+      color: var(--color-accent);
+      
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+  
+  // Website link
+  &__website {
+    margin-top: var(--spacing-lg);
+    
+    a {
+      color: var(--color-accent);
+      font-weight: 600;
+      
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+  
+  // Map container
+  &__map-container {
+    width: 100%;
+    height: 100%;
+    height: 400px;
+    min-height: 300px;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: var(--box-shadow);
+  }
+}
+
+// ===== CONTENT SECTION =====
+// Block editor content area
+.ds-location-content {
+
+  
+  &__inner {
+    max-width: var(--content-max-width);
+    margin: 0 auto;
+    
+    // Standard block editor content styling
+    p {
+      margin-bottom: var(--spacing-md);
+    }
+    
+    h2, h3, h4 {
+      margin-top: var(--spacing-lg);
+      margin-bottom: var(--spacing-md);
+    }
+    
+    ul, ol {
+      margin-bottom: var(--spacing-md);
+      padding-left: var(--spacing-lg);
+    }
+  }
+}
+
+// ===== RESPONSIVE ADJUSTMENTS =====
+@media (max-width: 768px) {
+  .ds-location-hero {
+    &__logo img {
+      max-width: 150px;
+    }
+  }
+  
+  .ds-location-details {
+    &__map-container {
+      height: 300px;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .ds-location-hero {
+    &__logo img {
+      max-width: 120px;
+    }
+  }
+}

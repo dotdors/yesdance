@@ -1,0 +1,141 @@
+:root {
+  /* Colors */
+  --color-primary: #ffffff;
+  --color-secondary: #fac9c7;
+  --color-accent: #e3554f;
+  --color-text: #ffffff;
+  --color-text-light: #dfdfdf;
+  --color-background: #141414;
+  --color-surface: hsl(284, 98%, 67%);
+  --color-border: #e3554f;
+  /* Typography */
+  --font-primary: Montserrat, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  --font-secondary: Georgia, 'Times New Roman', serif;
+  --font-size-base: 1rem;
+  --font-size-small: 0.875rem;
+  --font-size-large: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 2rem;
+  --font-size-4xl: 2.5rem;
+  --line-height-base: 1.6;
+  --line-height-tight: 1.2;
+  /* Spacing */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 2rem;
+  --spacing-xl: 3rem;
+  --spacing-2xl: 4rem;
+  /* Layout */
+  --container-max-width: 2000px;
+  --content-max-width: 2000px;
+  --border-radius: 8px;
+  --box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+body {
+  font-family: Montserrat, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  font-size: 1rem;
+  color: #ffffff;
+  background-color: #141414;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 900;
+  line-height: 1.2;
+  color: #ffffff;
+}
+a {
+  color: #e3554f;
+  text-decoration: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+a:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+.container {
+  max-width: 2000px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+.grid {
+  display: grid;
+  gap: 2rem;
+}
+.flex {
+  display: flex;
+  gap: 1rem;
+}
+.flex-center {
+  justify-content: center;
+  align-items: center;
+}
+.button {
+  background: #e3554f;
+  color: #fac9c7;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 700;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.button:hover {
+  opacity: 0.85;
+}
+.card {
+  background: hsl(284, 98%, 67%);
+  border-radius: 8px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  padding: 1rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.card:hover {
+  transform: translateY(-4px);
+}
+.site-footer {
+  background: #141414;
+}
+.site-header {
+  border-bottom: none;
+}
+.site-header.scrolled {
+  background: #141414;
+}
+.site-description {
+  display: none;
+}
+header#masthead {
+  background: rgba(20, 20, 20, 0.5);
+  padding-top: 1em;
+  padding-bottom: 1em;
+}
+.main-navigation a {
+  font-weight: 400;
+  text-transform: uppercase;
+}
+.main-navigation a:hover,
+.main-navigation a .current-menu-item > a {
+  border-bottom-color: transparent;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.6em;
+}
+.home .site-footer {
+  background: transparent;
+}
+#page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  /* full screen */
+}
+.site-main {
+  flex: 1;
+  /* take up remaining space */
+  padding-top: 0;
+}

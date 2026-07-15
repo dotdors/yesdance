@@ -1,0 +1,254 @@
+// out: false
+// ============================
+// _location-picker.less
+// Split-button location picker for navigation
+// ============================
+// Structure:
+// ┌─────────────────┬───┐
+// │  Location Name  │ ▼ │  (red capsule, white text, white divider)
+// └─────────────────┴───┘
+// Click name = navigate to location page
+// Click arrow = open dropdown to select different location
+
+// ===== CONTAINER =====
+.location-picker {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+// ===== SPLIT BUTTON (RED CAPSULE) =====
+.location-picker__split {
+  display: inline-flex;
+  align-items: stretch;
+  background: var(--color-accent, #e23b2a);
+  border-radius: 999px; // Full capsule
+  overflow: hidden;
+  transition: background-color 0.2s ease;
+  
+  &:hover {
+    background: color-mix(in srgb, var(--color-accent, #e23b2a) 85%, black);
+  }
+  
+  // Fallback for browsers without color-mix
+  @supports not (background: color-mix(in srgb, red 50%, black)) {
+    &:hover {
+      filter: brightness(0.9);
+    }
+  }
+}
+
+// ===== LOCATION LINK (Left Side) =====
+.main-navigation .location-picker__link {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  color: var(--color-secondary, #fff) !important; // Override nav link colors
+  font-weight: 700;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-decoration: none !important; // Override nav link underlines
+  transition: opacity 0.2s ease;
+  
+  &:hover,
+  &:focus {
+    color: var(--color-secondary, #fff) !important;
+    text-decoration: none !important;
+    opacity: 0.9;
+  }
+  
+  &:focus-visible {
+    outline: 2px solid var(--color-secondary, #fff);
+    outline-offset: -4px;
+    border-radius: 4px;
+  }
+}
+
+.location-picker__current {
+  white-space: nowrap;
+}
+
+// ===== WHITE DIVIDER LINE =====
+.location-picker__divider {
+  width: 1px;
+  background: rgba(255, 255, 255, 0.4);
+  margin: 0.375rem 0; // Inset from top/bottom
+}
+
+// ===== DROPDOWN TOGGLE (Right Side) =====
+.location-picker__toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 0.75rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--color-secondary, #fff);
+  transition: opacity 0.2s ease;
+  
+  &:hover {
+    opacity: 0.8;
+  }
+  
+  &:focus-visible {
+    outline: 2px solid var(--color-secondary, #fff);
+    outline-offset: -4px;
+    border-radius: 4px;
+  }
+}
+
+.location-picker__arrow {
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.location-picker.is-open .location-picker__arrow {
+  transform: rotate(180deg);
+}
+
+// ===== DROPDOWN MENU =====
+.location-picker__dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0; // Align to right edge of button
+  left: auto;
+  min-width: 200px;
+  background: var(--color-secondary, #fff);
+  border: 2px solid var(--color-accent, #e23b2a);
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  overflow: hidden;
+  padding: 0.5rem 0; // Restore vertical padding
+  
+  // Hidden by default
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px);
+  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+}
+
+.location-picker.is-open .location-picker__dropdown {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+// ===== DROPDOWN ITEMS =====
+.main-navigation .location-picker__item {
+  display: block;
+  padding: 0.625rem 1.25rem; // Restore padding
+  color: var(--color-text, #5a65a1) !important;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none !important;
+  white-space: nowrap;
+  transition: background-color 0.15s ease, color 0.15s ease;
+  
+  &:last-child {
+    border-bottom: none;
+  }
+  
+  &:hover,
+  &:focus {
+    background: var(--color-accent, #e23b2a);
+    color: var(--color-secondary, #fff) !important;
+    text-decoration: none !important;
+    outline: none;
+  }
+  
+  &:focus-visible {
+    outline: 2px solid var(--color-accent, #e23b2a);
+    outline-offset: -2px;
+  }
+  
+  // Currently selected location
+  &.is-current {
+    color: var(--color-accent, #e23b2a) !important;
+    font-weight: 700;
+    background: rgba(226, 59, 42, 0.08);
+    
+    &:hover {
+      background: var(--color-accent, #e23b2a);
+      color: var(--color-secondary, #fff) !important;
+    }
+  }
+}
+
+// ===== OVERRIDE NAV LINK STYLES =====
+// Extra specificity to override main navigation defaults
+.main-navigation,
+.primary-navigation,
+nav {
+  .location-picker__link {
+    color: var(--color-secondary, #fff) !important;
+    text-decoration: none !important;
+    border-bottom: none !important;
+    
+    &:hover {
+      color: var(--color-secondary, #fff) !important;
+      text-decoration: none !important;
+      border-bottom: none !important;
+      opacity: 0.9;
+    }
+  }
+  
+  .location-picker__item {
+    text-decoration: none !important;
+    border-bottom-color: rgba(0, 0, 0, 0.06) !important;
+    
+    &:hover {
+      text-decoration: none !important;
+    }
+    
+    &:last-child {
+      border-bottom: none !important;
+    }
+  }
+}
+
+// ===== MENU ITEM WRAPPER =====
+.menu-item-location-picker {
+  display: flex;
+  align-items: center;
+  margin-left: 1rem;
+  
+  // Reset any list item styles
+  &::before {
+    display: none;
+  }
+}
+
+// ===== RESPONSIVE =====
+@media (max-width: 768px) {
+  .location-picker__link {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8125rem;
+  }
+  
+  .location-picker__toggle {
+    padding: 0.5rem 0.5rem;
+  }
+  
+  .location-picker__dropdown {
+    min-width: 180px;
+  }
+  
+  .menu-item-location-picker {
+    margin-left: 0.5rem;
+  }
+}
+
+// ===== ACCESSIBILITY =====
+@media (prefers-reduced-motion: reduce) {
+  .location-picker__split,
+  .location-picker__link,
+  .location-picker__toggle,
+  .location-picker__arrow,
+  .location-picker__dropdown,
+  .location-picker__item {
+    transition: none;
+  }
+}

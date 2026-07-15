@@ -1,0 +1,72 @@
+// out: false
+// ============================
+// _typography.less
+// Project-specific typography overrides and extensions
+// ============================
+
+// ===== BASE OVERRIDES =====
+body {
+  font-family: var(--font-primary);
+  font-size: var(--font-size-base);
+  color: var(--color-text);
+  background-color: var(--color-background);
+}
+
+// ===== HEADING EXTENSIONS =====
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 900;
+  line-height: var(--line-height-tight);
+  color: var(--color-primary);
+  text-wrap: balance;  // Modern CSS: Better multi-line heading typography
+}
+
+// ===== PARAGRAPH IMPROVEMENTS =====
+p {
+  text-wrap: pretty;  // Modern CSS: Reduces orphans, improves readability
+}
+
+// ===== LINK OVERRIDES =====
+a {
+  color: var(--color-accent); 
+  text-decoration: none;
+  transition: var(--transition);
+  
+  &:hover {
+    opacity: 0.8;
+    text-decoration: underline;
+  }
+}
+
+// ===== REUSABLE TEXT PATTERNS =====
+.text-small {
+  font-size: var(--font-size-small);
+  color: var(--color-text-light);
+}
+
+.text-meta {
+  font-size: var(--font-size-small);
+  color: var(--color-text-light);
+  font-weight: 400;
+}
+
+.text-subtitle {
+  font-size: var(--font-size-large);
+  color: var(--color-text-light);
+  font-weight: 600;
+}
+
+.text-eyebrow {
+  font-size: var(--font-size-small);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 700;
+  color: var(--color-accent);
+}
+
+// Badge text style
+.badge-text {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}

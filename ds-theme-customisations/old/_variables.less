@@ -1,0 +1,168 @@
+// out: false
+// ============================
+// _variables.less
+// DS Theme Customizations - Project-Specific Variables
+// ============================
+
+// ===== LIGHT MODE (DEFAULT) =====
+// Currently focusing on light mode only - dark mode disabled until design is finalized
+@color-primary-light: #000000;
+@color-secondary-light: #ffffff;
+@color-accent-light: #e23b2a;        // Red - used for featured buttons
+@color-text-light-mode: #5a65a1;     // Purple-blue text
+@color-text-light-secondary: #666666;
+@color-background-light: #ffffff;
+@color-surface-light: #fbf5e4;       // Cream
+@color-border-light: #eda318;        // Gold
+@color-purple-dark: #38427a;         // Dark purple for overlays
+@color-background-dark: #38427a;    // footer background
+// ===== DARK MODE (DISABLED FOR NOW) =====
+// Uncomment when ready to implement dark mode
+/*
+@color-primary-dark: #ffffff;
+@color-secondary-dark: #eda318;
+@color-accent-dark: #e23b2a;
+@color-text-dark: #ffffff;
+@color-text-dark-secondary: #fbf5e4;
+@color-background-dark: #38427a;
+@color-surface-dark: #5a65a1;
+@color-border-dark: #fbf5e4;
+
+@gradient-split-dark: linear-gradient(180deg, 
+  @color-background-dark 0%, 
+  @color-background-dark 55%, 
+  @color-surface-dark 55%, 
+  @color-surface-dark 100%);
+*/
+
+// ===== GRADIENTS =====
+@gradient-split-light: linear-gradient(180deg, 
+  @color-background-light 0%, 
+  @color-background-light 55%, 
+  @color-surface-light 55%, 
+  @color-surface-light 100%);
+
+// Hero overlay gradient (diagonal purple)
+@gradient-hero-overlay: linear-gradient(
+  135deg,
+  fade(@color-purple-dark, 75%) 0%,
+  fade(@color-purple-dark, 45%) 100%
+);
+
+// ===== TYPOGRAPHY =====
+@font-primary: 'DM Sans', Montserrat, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+@font-secondary: Verdana, Georgia, 'Times New Roman', serif;
+
+@font-size-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+@font-size-small: clamp(0.875rem, 0.85rem + 0.125vw, 1rem);
+@font-size-large: clamp(1.125rem, 1.05rem + 0.375vw, 1.25rem);
+@font-size-xl: clamp(1.25rem, 1.15rem + 0.5vw, 1.5rem);
+@font-size-2xl: clamp(1.5rem, 1.25rem + 1.25vw, 2rem);
+@font-size-3xl: clamp(2rem, 1.5rem + 2.5vw, 2.75rem);
+@font-size-4xl: clamp(2.5rem, 1.75rem + 3.75vw, 3.5rem);
+
+@line-height-base: 1.25;
+@line-height-tight: 1;
+
+// ===== SPACING =====
+@spacing-xs: 0.25rem;
+@spacing-sm: 0.5rem;
+@spacing-md: 1rem;
+@spacing-lg: 2rem;
+@spacing-xl: 3rem;
+@spacing-2xl: 4rem;
+
+// ===== LAYOUT =====
+@container-max-width: 2000px;
+@content-max-width: 2000px;
+@border-radius: 0px;
+@border-radius-pill: 999px;  // For pill-shaped buttons
+@section-padding-x: clamp(1rem, 6vw, 18rem); 
+@box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+@transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+// ===== CSS CUSTOM PROPERTIES =====
+// Light mode only (for now)
+:root {
+  // Enable height: auto animations (modern CSS)
+  interpolate-size: allow-keywords;
+  
+  /* Colors */
+  --color-primary: @color-primary-light;
+  --color-secondary: @color-secondary-light;
+  --color-accent: @color-accent-light;
+  --color-text: @color-text-light-mode;
+  --color-text-light: @color-text-light-secondary;
+  --color-background: @color-background-light;
+  --color-surface: @color-surface-light;
+  --color-border: @color-border-light;
+  --color-gold: @color-border-light;
+  --color-purple-dark: @color-purple-dark;
+  --gradient-split: @gradient-split-light;
+  --gradient-hero-overlay: @gradient-hero-overlay;
+  --color-button-text: @color-background-light;
+  --color-button-bg: @color-primary-light;
+
+  /* Typography */
+  --font-primary: @font-primary;
+  --font-secondary: @font-secondary;
+  --font-size-base: @font-size-base;
+  --font-size-small: @font-size-small;
+  --font-size-large: @font-size-large;
+  --font-size-xl: @font-size-xl;
+  --font-size-2xl: @font-size-2xl;
+  --font-size-3xl: @font-size-3xl;
+  --font-size-4xl: @font-size-4xl;
+  --line-height-base: @line-height-base;
+  --line-height-tight: @line-height-tight;
+
+  /* Spacing */
+  --spacing-xs: @spacing-xs;
+  --spacing-sm: @spacing-sm;
+  --spacing-md: @spacing-md;
+  --spacing-lg: @spacing-lg;
+  --spacing-xl: @spacing-xl;
+  --spacing-2xl: @spacing-2xl;
+
+  /* Layout */
+  --container-max-width: @container-max-width;
+  --content-max-width: @content-max-width;
+  --border-radius: @border-radius;
+  --border-radius-pill: @border-radius-pill;
+  --box-shadow: @box-shadow;
+  --transition: @transition;
+}
+
+// ===== DARK MODE (DISABLED) =====
+// Uncomment when ready to implement dark mode
+/*
+[data-theme="dark"] {
+  --color-primary: @color-primary-dark;
+  --color-secondary: @color-secondary-dark;
+  --color-accent: @color-secondary-dark;
+  --color-text: @color-text-dark;
+  --color-text-light: @color-text-dark-secondary;
+  --color-background: @color-background-dark;
+  --color-surface: @color-surface-dark;
+  --color-border: @color-border-dark;
+  --color-gold: @color-secondary-dark;
+  --gradient-split: @gradient-split-dark;
+  --color-button-text: @color-background-dark;
+  --color-button-bg: @color-primary-dark;
+  --box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --color-primary: @color-primary-dark;
+    --color-secondary: @color-secondary-dark;
+    --color-accent: @color-accent-dark;
+    --color-text: @color-text-dark;
+    --color-text-light: @color-text-dark-secondary;
+    --color-background: @color-background-dark;
+    --color-surface: @color-surface-dark;
+    --color-border: @color-border-dark;
+    --box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+  }
+}
+*/

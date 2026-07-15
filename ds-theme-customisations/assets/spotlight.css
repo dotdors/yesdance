@@ -1,0 +1,58 @@
+:root {
+  --circle-size: 150px;
+  --circle-x: 50%;
+  --circle-y: 50%;
+}
+
+#spotlight-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  /* Nothing visible by default */
+}
+
+/* Base circle shape, used for both modes */
+#spotlight-overlay::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  clip-path: circle(var(--circle-size) at var(--circle-x) var(--circle-y));
+}
+
+/* === Spotlight mode === */
+body.spotlight-active #spotlight-overlay::before {
+  backdrop-filter: brightness(1.5); /* adjust brightness here */
+}
+
+/* === Invert mode === */
+body.invert-active #spotlight-overlay::before {
+  backdrop-filter: invert(1);
+}
+/* === RGB Spotlight mode === */
+body.rgbspotlight-active #spotlight-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+body.rgbspotlight-active #spotlight-overlay::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    /* White boost in the center */
+    radial-gradient(circle calc(var(--circle-size) / 3) at var(--circle-x) var(--circle-y),
+      rgba(255, 255, 255, 0.9), transparent 80%),
+    /* Red spotlight */
+    radial-gradient(circle var(--circle-size) at calc(var(--circle-x) - 8px) calc(var(--circle-y) - 6px),
+      rgba(255, 0, 0, 0.6), transparent 80%),
+    /* Green spotlight */
+    radial-gradient(circle var(--circle-size) at calc(var(--circle-x) + 8px) calc(var(--circle-y) - 4px),
+      rgba(0, 255, 0, 0.6), transparent 80%),
+    /* Blue spotlight */
+    radial-gradient(circle var(--circle-size) at calc(var(--circle-x) - 4px) calc(var(--circle-y) + 8px),
+      rgba(0, 0, 255, 0.6), transparent 80%);
+  mix-blend-mode: screen;
+}
