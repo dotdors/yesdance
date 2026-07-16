@@ -1,1 +1,0 @@
-[12-Sep-2025 19:08:47 UTC] Cron unschedule event error for hook: epc_purge_request, Error code: could_not_set, Error message: The cron event list could not be saved., Data: {"schedule":false,"args":["https:\/\/www.yesyoucandance.org\/2016site\/.*"]}
