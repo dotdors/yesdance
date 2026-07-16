@@ -1,0 +1,162 @@
+// out: false
+// ============================
+// scroll-animations.less
+// Core scroll animation styles
+// Author: NC Dorsner - https://dandysite.com
+// ============================
+
+// ===== Page Container Setup =====
+.scroll-page {
+  height: 100vh;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+}
+
+// ===== Base Section Styles =====
+.section {
+  min-height: var(--section-min-height);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  scroll-snap-align: start;
+  position: relative;
+  overflow: hidden;
+  
+  // Use base theme variables
+  padding: var(--spacing-lg);
+  color: var(--color-text);
+  
+  // Default background gradient
+  background: linear-gradient(
+    135deg,
+    var(--gradient-start) 0%,
+    var(--gradient-mid) 50%,
+    var(--gradient-end) 100%
+  );
+  
+  // Typography defaults
+  h1, h2, h3 {
+    font-family: var(--font-primary);
+    font-weight: 600;
+    line-height: var(--line-height-tight);
+    text-align: center;
+  }
+  
+  h1 {
+    font-size: var(--font-size-4xl);
+    margin-bottom: var(--spacing-lg);
+  }
+  
+  h2 {
+    font-size: var(--font-size-3xl);
+    margin-bottom: var(--spacing-md);
+  }
+  
+  p {
+    font-size: var(--font-size-large);
+    line-height: var(--line-height-base);
+    max-width: 60ch;
+    margin: 0 auto;
+    text-align: center;
+  }
+}
+
+// ===== Animation Types =====
+
+// Parallax background effect
+.section[data-anim="parallax"] {
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -10%;
+    background: inherit;
+    transform: translateY(calc(var(--scroll-progress, 0) * var(--parallax-speed) * -100px));
+    z-index: -1;
+  }
+}
+
+// Fade up animation
+.section[data-anim="fade-up"] {
+  opacity: calc(var(--scroll-progress, 0));
+  transform: translateY(calc((1 - var(--scroll-progress, 0)) * 50px));
+  transition: opacity var(--scroll-duration) var(--scroll-easing),
+              transform var(--scroll-duration) var(--scroll-easing);
+}
+
+// Scale in animation
+.section[data-anim="scale-in"] {
+  transform: scale(calc(0.8 + (var(--scroll-progress, 0) * 0.2)));
+  transition: transform var(--scroll-duration) var(--scroll-easing);
+}
+
+// 3D perspective shift
+.section[data-anim="perspective"] {
+  transform: 
+    perspective(var(--perspective-distance)) 
+    rotateX(calc(var(--scroll-progress, 0) * var(--perspective-rotation)))
+    translateZ(calc(var(--scroll-progress, 0) * var(--perspective-translate)));
+  transition: transform var(--scroll-duration) var(--scroll-easing);
+}
+
+// Slide from side
+.section[data-anim="slide-left"] {
+  transform: translateX(calc((1 - var(--scroll-progress, 0)) * -100px));
+  transition: transform var(--scroll-duration) var(--scroll-easing);
+}
+
+.section[data-anim="slide-right"] {
+  transform: translateX(calc((1 - var(--scroll-progress, 0)) * 100px));
+  transition: transform var(--scroll-duration) var(--scroll-easing);
+}
+
+// ===== Color Variations =====
+.section.color-accent {
+  background: linear-gradient(135deg, var(--color-accent), darken(@color-accent, 20%));
+}
+
+.section.color-secondary {
+  background: linear-gradient(135deg, var(--color-secondary), darken(@color-secondary, 15%));
+}
+
+.section.color-surface {
+  background: linear-gradient(135deg, var(--color-surface), darken(@color-surface, 25%));
+}
+
+// ===== Responsive Adjustments =====
+@media (max-width: 768px) {
+  .section {
+    padding: var(--spacing-md);
+    
+    h1 {
+      font-size: var(--font-size-3xl);
+    }
+    
+    h2 {
+      font-size: var(--font-size-2xl);
+    }
+    
+    p {
+      font-size: var(--font-size-base);
+    }
+  }
+  
+  // Reduce perspective effects on mobile
+  .section[data-anim="perspective"] {
+    transform: none;
+  }
+}
+
+// ===== Animation Utilities =====
+.section.no-snap {
+  scroll-snap-align: none;
+}
+
+.section.center-content {
+  text-align: center;
+  
+  * {
+    margin-left: auto;
+    margin-right: auto;
+  }
+}

@@ -1,0 +1,42 @@
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Name>CUSTOM</Name>
+    <ProjectGuid>{d23ba316-b6ee-43ec-92f4-2d563b6d5e18}</ProjectGuid>
+    <RootNamespace>
+    </RootNamespace>
+    <OutputType>Library</OutputType>
+    <ProjectTypeGuids>{A0786B88-2ADB-4C21-ABE8-AA2D79766269}</ProjectTypeGuids>
+    <ProjectHome />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <IncludeDebugInformation>true</IncludeDebugInformation>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <IncludeDebugInformation>false</IncludeDebugInformation>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include=".vs\slnx.sqlite" />
+    <Compile Include=".vs\VSWorkspaceState.json" />
+    <Compile Include="custom\back\style.css" />
+    <Compile Include="custom\back\style.less" />
+    <Compile Include="custom\back\style.min.css" />
+    <Compile Include="custom\images\artc-small.png" />
+    <Compile Include="custom\images\logo-mobile.png" />
+    <Compile Include="custom\custom.js" />
+    <Compile Include="custom\functions.php" />
+    <Compile Include="custom\style.css" />
+    <Compile Include="custom\style.less" />
+    <Compile Include="custom\style.min.css" />
+    <Compile Include="readme.txt" />
+    <Compile Include="theme-customisations.php" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include=".vs\ds-theme-customisations-master\v15" />
+    <Folder Include=".vs\ds-theme-customisations-master" />
+    <Folder Include=".vs" />
+    <Folder Include="custom\back" />
+    <Folder Include="custom\images" />
+    <Folder Include="custom" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,50 @@
+<?php
+/**
+ * Footer Template
+ * 
+ * Supports block template parts (modern) with PHP fallback (classic)
+ * Block template part is editable in Appearance > Editor > Template Parts
+ * 
+ * @package dandysite-jane
+ */
+?>
+</main>
+
+    <footer id="colophon" class="site-footer">
+        <?php 
+        // Use block template part if available (modern approach)
+        if ( function_exists( 'block_template_part' ) ) :
+            block_template_part( 'footer' );
+        else : 
+            // Fallback for environments without block template support
+        ?>
+            <div class="container">
+                <?php if ( has_nav_menu( 'footer' ) ) : ?>
+                    <nav class="footer-navigation" aria-label="<?php esc_attr_e( 'Footer Menu', 'dandysite-jane' ); ?>">
+                        <?php
+                        wp_nav_menu( [
+                            'theme_location' => 'footer',
+                            'menu_id'        => 'footer-menu',
+                            'depth'          => 1,
+                            'container'      => false,
+                        ] );
+                        ?>
+                    </nav>
+                <?php endif; ?>
+                
+                <div class="site-info">
+                    <p>
+                        &copy; <?php echo date( 'Y' ); ?> 
+                        <a href="<?php echo esc_url( home_url( '/' ) ); ?>"><?php bloginfo( 'name' ); ?></a> | 
+                        <?php esc_html_e( 'Built by', 'dandysite-jane' ); ?> 
+                        <a href="https://dandysite.com" target="_blank" rel="noopener">Dandysite</a>
+                    </p>
+                </div>
+            </div>
+        <?php endif; ?>
+    </footer>
+</div><!-- #page -->
+
+<?php wp_footer(); ?>
+</body>
+</html>

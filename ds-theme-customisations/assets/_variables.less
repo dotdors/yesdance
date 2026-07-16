@@ -2,68 +2,78 @@
 // ============================
 // _variables.less
 // DS Theme Customizations - Project-Specific Variables
+// v5 "Ink · Bone · Red" palette — 2026-07 reskin
 // ============================
+// Design rules encoded here:
+//   ONE dark (ink) — navy/periwinkle retired
+//   ONE action color (accent red) — buttons, links, highlights
+//   Gold = motif only (footprints, flourishes, cites) — never borders/buttons
+//   True neutrals (paper/bone/line) — cream de-yellowed
+//   Soft geometry — 24px radius, pills
 
 // ===== LIGHT MODE (DEFAULT) =====
-// These are Jane's original light theme colors
-@color-primary-light: #000000;
-@color-secondary-light: #ffffff;
-@color-accent-light: #e23b2a;
-@color-text-light-mode: #5a65a1;
-@color-text-light-secondary: #666666;
-@color-background-light: #ffffff;
-@color-surface-light: #fbf5e4;
-@color-border-light: #eda318;
+@color-primary-light: #211E26;        // ink — warm near-black (was #000)
+@color-secondary-light: #ffffff;      // card surfaces
+@color-accent-light: #E8402A;         // brand red, slightly brightened (was #e23b2a)
+@color-accent-ink: #C33420;           // accent hover/active
+@color-text-light-mode: #211E26;      // BODY TEXT NOW INK (was periwinkle #5a65a1)
+@color-text-light-secondary: #5C5861; // secondary text — warm gray, not blue
+@color-background-light: #FCFBF9;     // paper — warm white (was #fff)
+@color-surface-light: #F1EFE9;        // bone — neutral alt sections (was cream #fbf5e4)
+@color-border-light: #E3E0D8;         // hairline (was GOLD — gold borders retired)
+@color-motif: #F0A63B;                // gold, motif-only role (was #eda318)
 
 // ===== DARK MODE =====
-// Your blue/orange theme becomes dark mode
-@color-primary-dark: #ffffff;
-@color-secondary-dark: #eda318;
-@color-accent-dark: #e23b2a;
-@color-text-dark: #ffffff;
-@color-text-dark-secondary: #fbf5e4;
-@color-background-dark: #38427a;
-@color-surface-dark: #5a65a1;
-@color-border-dark: #fbf5e4;
+// (disabled; values updated to stay consistent with v5 if re-enabled)
+@color-primary-dark: #FCFBF9;
+@color-secondary-dark: #2B2830;
+@color-accent-dark: #E8402A;
+@color-text-dark: #FCFBF9;
+@color-text-dark-secondary: #C9C5CE;
+@color-background-dark: #211E26;      // ink replaces navy #38427a
+@color-surface-dark: #2B2830;
+@color-border-dark: #3A3540;
 
 // ===== GRADIENTS =====
-@gradient-split-light: linear-gradient(180deg, 
-  @color-background-light 0%, 
-  @color-background-light 55%, 
-  @color-surface-light 55%, 
+@gradient-split-light: linear-gradient(180deg,
+  @color-background-light 0%,
+  @color-background-light 55%,
+  @color-surface-light 55%,
   @color-surface-light 100%);
 
-@gradient-split-dark: linear-gradient(180deg, 
-  @color-background-dark 0%, 
-  @color-background-dark 55%, 
-  @color-surface-dark 55%, 
+@gradient-split-dark: linear-gradient(180deg,
+  @color-background-dark 0%,
+  @color-background-dark 55%,
+  @color-surface-dark 55%,
   @color-surface-dark 100%);
 
-// Hero overlay gradient (diagonal purple fade)
+// Hero overlay: ink-based (was purple)
 @gradient-hero-overlay: linear-gradient(
   135deg,
-  rgba(56, 66, 122, 0.85) 0%,
-  rgba(56, 66, 122, 0.6) 40%,
-  rgba(56, 66, 122, 0.3) 70%,
+  rgba(33, 30, 38, 0.85) 0%,
+  rgba(33, 30, 38, 0.6) 40%,
+  rgba(33, 30, 38, 0.3) 70%,
   transparent 100%
 );
 
-// ===== TYPOGRAPHY (Same for both modes) =====
+// ===== TYPOGRAPHY =====
 @font-primary: 'DM Sans', Montserrat, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-@font-secondary: Verdana, Georgia, 'Times New Roman', serif;
+@font-secondary: 'Fraunces', Georgia, 'Times New Roman', serif;  // display serif for headings
 
 @font-size-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
 @font-size-small: clamp(0.875rem, 0.85rem + 0.125vw, 1rem);
-@font-size-large: clamp(1.125rem, 1.05rem + 0.375vw, 1.25rem);
+@font-size-large: clamp(1.125rem, 1.05rem + 0.375vw, 1.3rem);
 @font-size-xl: clamp(1.25rem, 1.15rem + 0.5vw, 1.5rem);
-@font-size-2xl: clamp(1.5rem, 1.25rem + 1.25vw, 2rem);
-@font-size-3xl: clamp(2rem, 1.5rem + 2.5vw, 2.75rem);
-@font-size-4xl: clamp(2.5rem, 1.75rem + 3.75vw, 3.5rem);
+@font-size-2xl: clamp(1.5rem, 1.3rem + 1vw, 2rem);
+@font-size-3xl: clamp(2rem, 1.5rem + 2.4vw, 3.25rem);
+@font-size-4xl: clamp(2.5rem, 1.75rem + 3.75vw, 4rem);
+@font-size-hero: clamp(3rem, 2rem + 6vw, 6.25rem);  // homepage headline only
 
-@line-height-base: 1.25;
+@line-height-base: 1.65;      // body copy breathing room (was 1.25)
+@line-height-heading: 1.08;   // NEW: display headings
 @line-height-tight: 1;
 
-// ===== SPACING (Same for both modes) =====
+// ===== SPACING =====
 @spacing-xs: 0.25rem;
 @spacing-sm: 0.5rem;
 @spacing-md: 1rem;
@@ -71,44 +81,52 @@
 @spacing-xl: 3rem;
 @spacing-2xl: 4rem;
 
-// ===== LAYOUT (Same for both modes) =====
+// ===== LAYOUT =====
 @container-max-width: 2000px; //using other methods to limit width
 @content-max-width: 2000px;
-@border-radius: 0px;
-@border-radius-pill: 999px;  // For pill-shaped buttons
-@section-padding-x: clamp(1rem, 6vw, 18rem); 
-@box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+@border-radius: 24px;         // soft geometry (was 0)
+@border-radius-small: 12px;   // NEW: inputs, tags-with-corners, small elements
+@border-radius-pill: 999px;
+@section-padding-x: clamp(1rem, 6vw, 18rem);
+@box-shadow: 0 1px 2px rgba(33, 30, 38, 0.05), 0 16px 40px -20px rgba(33, 30, 38, 0.25);
+@box-shadow-hover: 0 2px 4px rgba(33, 30, 38, 0.06), 0 28px 56px -24px rgba(33, 30, 38, 0.35);
 @transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
 // ===== CSS CUSTOM PROPERTIES =====
-// Light mode (default)
 :root,
 [data-theme="light"] {
   /* Colors */
   --color-primary: @color-primary-light;
   --color-secondary: @color-secondary-light;
   --color-accent: @color-accent-light;
+  --color-accent-ink: @color-accent-ink;
   --color-text: @color-text-light-mode;
   --color-text-light: @color-text-light-secondary;
   --color-background: @color-background-light;
   --color-surface: @color-surface-light;
   --color-border: @color-border-light;
-  
+
   /* Named colors for specific uses */
-  --color-purple-dark: @color-background-dark;  // #38427a - footer bg, news carousel tint
-  --color-gold: @color-border-light;            // #eda318 - accent links, decorative
-  
+  --color-ink: @color-primary-light;            // dark sections, footer
+  --color-purple-dark: @color-primary-light;    // LEGACY ALIAS -> ink (was #38427a); migrate refs, then remove
+  --color-gold: @color-motif;                   // motif only: footprints, flourishes, cites
+
+  /* Derived tints — modern CSS, override-friendly in child themes */
+  --color-accent-tint: color-mix(in oklab, @color-accent-light 9%, @color-background-light);
+  --color-ink-40: color-mix(in srgb, @color-primary-light 40%, transparent);
+
   /* Gradients */
   --gradient-split: @gradient-split-light;
   --gradient-hero-overlay: @gradient-hero-overlay;
-  
+
   /* Button colors */
-  --color-button-text: @color-background-light;
-  --color-button-bg: @color-primary-light;
+  --color-button-text: #ffffff;
+  --color-button-bg: @color-accent-light;       // buttons are accent now (were black)
 
   /* Typography */
   --font-primary: @font-primary;
   --font-secondary: @font-secondary;
+  --font-display: @font-secondary;              // clearer alias for headings
   --font-size-base: @font-size-base;
   --font-size-small: @font-size-small;
   --font-size-large: @font-size-large;
@@ -116,7 +134,9 @@
   --font-size-2xl: @font-size-2xl;
   --font-size-3xl: @font-size-3xl;
   --font-size-4xl: @font-size-4xl;
+  --font-size-hero: @font-size-hero;
   --line-height-base: @line-height-base;
+  --line-height-heading: @line-height-heading;
   --line-height-tight: @line-height-tight;
 
   /* Spacing */
@@ -131,41 +151,43 @@
   --container-max-width: @container-max-width;
   --content-max-width: @content-max-width;
   --border-radius: @border-radius;
+  --border-radius-small: @border-radius-small;
+  --border-radius-pill: @border-radius-pill;
   --box-shadow: @box-shadow;
+  --box-shadow-hover: @box-shadow-hover;
   --transition: @transition;
 }
 
-// Dark mode overrides
+// Dark mode overrides (still disabled — perfecting light mode first)
 [data-theme="dark"] {
-  /* Colors */
   --color-primary: @color-primary-dark;
   --color-secondary: @color-secondary-dark;
-  --color-accent: @color-secondary-dark;
+  --color-accent: @color-accent-dark;
   --color-text: @color-text-dark;
   --color-text-light: @color-text-dark-secondary;
   --color-background: @color-background-dark;
   --color-surface: @color-surface-dark;
   --color-border: @color-border-dark;
   --gradient-split: @gradient-split-dark;
-  --color-button-text: @color-background-dark;
-  --color-button-bg: @color-primary-dark;
-
-  /* Adjust shadows for dark mode */
+  --color-button-text: #ffffff;
+  --color-button-bg: @color-accent-dark;
   --box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
 }
 
-// Dark mode auto-detection DISABLED for now
-// Uncomment when dark mode is ready
-// @media (prefers-color-scheme: dark) {
-//   :root:not([data-theme="light"]) {
-//     --color-primary: @color-primary-dark;
-//     --color-secondary: @color-secondary-dark;
-//     --color-accent: @color-accent-dark;
-//     --color-text: @color-text-dark;
-//     --color-text-light: @color-text-dark-secondary;
-//     --color-background: @color-background-dark;
-//     --color-surface: @color-surface-dark;
-//     --color-border: @color-border-dark;
-//     --box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
-//   }
-// }
+// ===== ALTERNATE PALETTE: "Deep Blue" (client option B) =====
+// To preview: change [data-theme="none"] to :root below and recompile.
+// Deep blue ink + warm off-white + terracotta accent; dusty blue takes the motif role.
+[data-theme="none"] {
+  --color-primary: #052638;
+  --color-text: #052638;
+  --color-text-light: #40606F;
+  --color-background: #F7F4EF;
+  --color-surface: #ECE7DD;
+  --color-border: #DCD5CA;
+  --color-accent: #E0572F;
+  --color-accent-ink: #BC4322;
+  --color-ink: #052638;
+  --color-purple-dark: #052638;
+  --color-gold: #AFC7D6;   // dusty blue motif
+  --color-button-bg: #E0572F;
+}

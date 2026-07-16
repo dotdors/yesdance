@@ -1,0 +1,59 @@
+/* Block Pattern Styles - ONLY layout, no colors */
+/* Colors should come from your LESS variables in custom.css */
+
+/* Programs Section - Layout only */
+.programs-section h2 {
+    text-align: center;
+    margin-bottom: 3rem;
+    font-size: 2.5rem;
+}
+
+.program-card {
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.program-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+/* About Section - Layout only */
+.about-section .wp-block-columns {
+    align-items: center;
+    gap: 3rem;
+}
+
+.about-image img {
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    height: auto;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .programs-section {
+        padding: 3rem 0;
+    }
+    
+    .program-card {
+        margin-bottom: 1.5rem;
+    }
+    
+    .about-section {
+        padding: 3rem 0;
+    }
+    
+    .about-section .wp-block-columns {
+        gap: 2rem;
+    }
+    
+    .about-section h2 {
+        font-size: 2rem;
+        text-align: center;
+    }
+}
