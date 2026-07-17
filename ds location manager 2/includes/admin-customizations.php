@@ -187,7 +187,18 @@ class DS_Location_Admin_Customizations {
         
         // Get all location data through the shared data class — single source of truth
         $data = DS_Location_Data::get_all($location_id);
-        
+
+        // A brand-new post reached from an unsaved editor screen carries
+        // WordPress's "Auto Draft" placeholder title — never show that as
+        // the City.
+        if ($location->post_status === 'auto-draft' && $data['city'] === 'Auto Draft') {
+            $data['city'] = '';
+        }
+
+        // Status shown in the form: auto-drafts are presented as Draft
+        // (saving will promote them to a real draft).
+        $display_status = ($location->post_status === 'publish') ? 'publish' : 'draft';
+
         $logo_url = $data['logo_url'];
         $flyer_url = $data['flyer_url'];
         $featured_image_id = $data['featured_image_id'];
@@ -282,6 +293,17 @@ class DS_Location_Admin_Customizations {
                                    value="<?php echo esc_attr($data['city']); ?>" class="regular-text"
                                    placeholder="e.g. Jupiter, FL">
                             <p class="description">This becomes the location's title across the site and app — keep it just the city (e.g. "Jupiter, FL"), not the studio name.</p>
+                        </div>
+
+                        <div class="ds-field">
+                            <label for="ds_location_status">Status</label>
+                            <select id="ds_location_status" name="ds_location_status">
+                                <option value="draft" <?php selected($display_status, 'draft'); ?>>Draft — hidden from the site and app</option>
+                                <option value="publish" <?php selected($display_status, 'publish'); ?>>Published — live on the site and app</option>
+                            </select>
+                            <?php if ($display_status === 'draft'): ?>
+                                <p class="description" style="color: #997404;"><strong>This location is a draft</strong> — it won't appear on the website, in the app, or in the location picker until it's published.</p>
+                            <?php endif; ?>
                         </div>
                         
                         <div class="ds-field">

@@ -46,7 +46,9 @@ A location is a `ds_location` post PLUS a synced `ds_post_location` taxonomy ter
 
 **Field access is unified** (`includes/class-location-fields.php` + `includes/class-location-data.php`): `DS_Location_Fields::all()` is the single registry of meta-backed fields (key, meta key, sanitizer), and `DS_Location_Data` is the single get/save path used by the meta box, the settings-page save handler, the "+ Add New Location" creation flow, `get_location_display_data()`, and this REST endpoint. **Adding a new field now means one new row in the registry** — not touching four separate places. City (post title) and the featured image (post thumbnail) are handled as special cases in `DS_Location_Data` rather than registry rows, since neither is a plain meta field.
 
-**Creating a location:** the only sanctioned path is "+ Add New Location" on the Settings page (admin-only) → `DS_Location_Data::create()` → lands as a draft, ready to fill in on the Settings page. There's no other supported way to create one (the standard "Add New" flow is still hidden from location managers).
+**Creating a location:** the only sanctioned path is "+ Add New Location" on the Settings page (admin-only) → `DS_Location_Data::create()` → lands as a draft, ready to fill in on the Settings page. There's no other supported way to create one for managers (as of v2.3.0 the standard "Add New" flow is capability-blocked for location managers via `create_locations`, not just hidden).
+
+**Draft vs. published (added 2026-07, plugin v2.3.0):** the Location Settings page now has a Draft/Published status control, and `DS_Location_Data::save()` auto-promotes auto-drafts to real drafts. **No API change** — every endpoint here already filters to `post_status = 'publish'` — but the practical consequence for the app is that a location can now be intentionally parked as a draft. If a location "disappears" from `/locations` (and its posts from `/posts_by_location`), check its status in wp-admin before debugging the app.
 
 ## Pending API changes (agreed, not yet implemented)
 

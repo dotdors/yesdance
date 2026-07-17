@@ -79,13 +79,45 @@ class DS_Location_Data {
      * @param array $posted Raw $_POST-style array (ds_location_* keys, plus ds_featured_image)
      */
     public static function save($location_id, array $posted) {
+        $current_status = get_post_status($location_id);
+
+        $post_update = array('ID' => $location_id);
+
         // City lives on the post title. Update it when a value was
         // actually submitted; otherwise just re-sync the mirror meta so
         // it can never silently drift from whatever the title already is.
-        if (isset($posted['ds_location_city']) && trim($posted['ds_location_city']) !== '') {
-            $city = sanitize_text_field($posted['ds_location_city']);
-            wp_update_post(array('ID' => $location_id, 'post_title' => $city));
-            update_post_meta($location_id, '_ds_location_city', $city);
+        // "Auto Draft" is WordPress's placeholder title on unsaved posts,
+        // never a real city — treat it as empty.
+        $posted_city = isset($posted['ds_location_city']) ? trim($posted['ds_location_city']) : '';
+        if ($posted_city !== '' && $posted_city !== 'Auto Draft') {
+            $post_update['post_title'] = sanitize_text_field($posted_city);
+        }
+
+        // Status: the settings page exposes Draft/Published. Independent of
+        // that, ALWAYS promote auto-drafts to real drafts on save —
+        // otherwise data saved against an auto-draft (e.g. reaching the
+        // settings page from an unsaved editor screen) is invisible in the
+        // Locations list and silently purged by WordPress within days.
+        $new_status = '';
+        if (isset($posted['ds_location_status']) && in_array($posted['ds_location_status'], array('draft', 'publish'), true)) {
+            $new_status = $posted['ds_location_status'];
+        }
+        if ($new_status === 'publish' && !current_user_can('publish_locations')) {
+            $new_status = 'draft';
+        }
+        if ($new_status === '' && $current_status === 'auto-draft') {
+            $new_status = 'draft';
+        }
+        if ($new_status && $new_status !== $current_status) {
+            $post_update['post_status'] = $new_status;
+        }
+
+        if (count($post_update) > 1) {
+            wp_update_post($post_update);
+        }
+
+        if (!empty($post_update['post_title'])) {
+            update_post_meta($location_id, '_ds_location_city', $post_update['post_title']);
         } else {
             self::sync_city_from_title($location_id);
         }
@@ -140,6 +172,12 @@ class DS_Location_Data {
      */
     public static function sync_city_from_title($location_id) {
         $title = get_the_title($location_id);
+
+        // Never mirror WordPress's "Auto Draft" placeholder as a city.
+        if ($title === 'Auto Draft') {
+            $title = '';
+        }
+
         update_post_meta($location_id, '_ds_location_city', $title);
         return $title;
     }

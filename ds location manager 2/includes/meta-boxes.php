@@ -60,6 +60,13 @@ class DS_Location_Meta_Boxes {
         if (!$post || !$post->ID) {
             return;
         }
+
+        // On a brand-new, unsaved location (auto-draft) the settings page
+        // would be editing a post that doesn't really exist yet — don't
+        // point people there until the post has been saved once.
+        if ($post->post_status === 'auto-draft') {
+            return;
+        }
         
         $settings_url = admin_url('admin.php?page=ds-location-settings&location_id=' . $post->ID);
         ?>
@@ -82,6 +89,20 @@ class DS_Location_Meta_Boxes {
      */
     public function location_details_meta_box($post) {
         wp_nonce_field('ds_location_meta', 'ds_location_meta_nonce');
+
+        // Brand-new, unsaved location: the settings page can't safely edit
+        // an auto-draft (anything saved against it stays invisible and gets
+        // purged by WordPress). Tell people to save first instead of
+        // linking them into that trap.
+        if ($post->post_status === 'auto-draft') {
+            ?>
+            <div class="ds-settings-link" style="display:block; margin-bottom:15px; padding:10px; background:#fcf9e8; border:1px solid #c3c4c7; border-left:4px solid #997404; border-radius:2px;">
+                <strong>Save this location first.</strong>
+                <br><small>Enter the City as the title above and click Save Draft (or Publish). The Location Settings page — where the studio name, contact info, logo, and flyer live — unlocks after the first save.</small>
+            </div>
+            <?php
+            return;
+        }
 
         $settings_url = admin_url('admin.php?page=ds-location-settings&location_id=' . $post->ID);
         ?>

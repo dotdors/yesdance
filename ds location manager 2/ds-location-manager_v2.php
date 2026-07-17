@@ -12,7 +12,15 @@ if (!defined('ABSPATH')) {
 
 class DS_Location_Manager_V2 {
 
-    private $version = '2.2.0';
+    private $version = '2.3.0';
+
+    /**
+     * Bump this whenever the Location Manager role's capability set changes.
+     * maybe_upgrade_roles() compares it to the stored option and re-runs the
+     * role definition once — instead of writing role caps to the DB on
+     * every page load.
+     */
+    const CAPS_VERSION = '4';
 
     public function __construct() {
         // Include required files
@@ -37,9 +45,6 @@ class DS_Location_Manager_V2 {
         register_activation_hook(__FILE__, array($this, 'activate'));
         register_deactivation_hook(__FILE__, array($this, 'deactivate'));
         
-        // Cap setup
-        add_action('init', array($this, 'setup_location_manager_caps'));
-
         // Hide Add New submenu and button
         add_action('admin_menu', array($this, 'remove_add_new_submenu'));
         add_action('admin_head', array($this, 'hide_add_new_button'));
@@ -56,7 +61,7 @@ class DS_Location_Manager_V2 {
     public function init() {
         $this->register_location_post_type();
         $this->register_location_taxonomy();
-        $this->create_location_manager_role();
+        $this->maybe_upgrade_roles();
         $this->setup_access_control();
         $this->setup_rest_api();
         add_filter('the_content', array($this, 'append_location_footer_to_post'));
@@ -238,6 +243,10 @@ class DS_Location_Manager_V2 {
             'capability_type' => array('location', 'locations'),
             'map_meta_cap' => true,
             'capabilities' => array(
+                // Real gate for creating locations — the hidden "Add New"
+                // button is cosmetic; this is what actually blocks
+                // post-new.php?post_type=ds_location for non-admins.
+                'create_posts'          => 'create_locations',
                 'edit_post'             => 'edit_location',
                 'read_post'             => 'read_location',
                 'delete_post'           => 'delete_location',
@@ -394,12 +403,43 @@ class DS_Location_Manager_V2 {
     }
 
     /**
-     * Create Location Manager Role
-     * Only creates if role doesn't exist or if capabilities need updating
+     * Run the role/capability definition once per CAPS_VERSION.
+     *
+     * Role capabilities are persisted in the wp_user_roles option, so they
+     * only need writing when the definition changes — not on every request
+     * (the old setup_location_manager_caps() was issuing up to 9
+     * update_option() writes per page load).
+     */
+    public function maybe_upgrade_roles() {
+        if (get_option('ds_lm_caps_version') === self::CAPS_VERSION) {
+            return;
+        }
+
+        $this->create_location_manager_role();
+        update_option('ds_lm_caps_version', self::CAPS_VERSION);
+    }
+
+    /**
+     * Create/update the Location Manager role — the single, canonical
+     * definition of its capability set. Called only from activation and
+     * maybe_upgrade_roles(), never on normal page loads.
+     *
+     * Post-type caps (edit_posts, edit_others_posts, etc.) are intentionally
+     * broad here; restrict_post_meta_caps() is what scopes them to the
+     * manager's assigned location. Notable exclusions:
+     * - edit_files: never appropriate for a low-trust role (theme/plugin
+     *   file editing) — revoked from existing installs by the migration.
+     * - create_locations: managers are assigned to locations, they don't
+     *   create them (see 'create_posts' in register_location_post_type()).
+     * - edit_others_locations / delete_others_locations: previously granted
+     *   and then removed again on every init by two methods fighting each
+     *   other; the effective state (removed) is now the defined state.
+     * - delete_location / delete_locations / delete_published_locations /
+     *   delete_private_locations: deleting locations is admin-only —
+     *   managers must not be able to trash their own location page
+     *   (map_location_meta_caps also hard-denies delete_location).
      */
     public function create_location_manager_role() {
-        $role = get_role('ds_location_manager');
-        
         $required_caps = array(
             'read' => true,
             'upload_files' => true,
@@ -417,23 +457,36 @@ class DS_Location_Manager_V2 {
             'publish_locations' => true,
             'read_location' => true,
             'read_private_locations' => true,
-            'edit_others_locations' => true,
-            'delete_locations' => true,
-            'delete_others_locations' => true,
-            'delete_published_locations' => true,
-            'delete_private_locations' => true,
-            'edit_files' => true,
             'assign_terms' => true
         );
-        
+
+        // Caps to actively strip from existing installs (in-place update
+        // rather than remove_role/add_role, so the role never disappears
+        // even for an instant).
+        $revoked_caps = array(
+            'edit_files',
+            'create_locations',
+            'edit_others_locations',
+            'delete_others_locations',
+            'delete_location',
+            'delete_locations',
+            'delete_published_locations',
+            'delete_private_locations',
+        );
+
+        $role = get_role('ds_location_manager');
+
         if (!$role) {
-            // Role doesn't exist, create it
             add_role('ds_location_manager', 'Location Manager', $required_caps);
         } else {
-            // Role exists, ensure all capabilities are set
             foreach ($required_caps as $cap => $grant) {
                 if (!$role->has_cap($cap)) {
                     $role->add_cap($cap, $grant);
+                }
+            }
+            foreach ($revoked_caps as $cap) {
+                if ($role->has_cap($cap)) {
+                    $role->remove_cap($cap);
                 }
             }
         }
@@ -441,6 +494,7 @@ class DS_Location_Manager_V2 {
         $admin_role = get_role('administrator');
         if ($admin_role) {
             $admin_caps = array(
+                'create_locations',
                 'edit_location', 'edit_locations', 'edit_others_locations',
                 'edit_published_locations', 'edit_private_locations', 'publish_locations',
                 'read_location', 'read_private_locations', 'delete_location',
@@ -461,6 +515,7 @@ class DS_Location_Manager_V2 {
     public function setup_access_control() {
         add_action('pre_get_posts', array($this, 'filter_posts_by_location'));
         add_filter('map_meta_cap', array($this, 'map_location_meta_caps'), 10, 4);
+        add_filter('map_meta_cap', array($this, 'restrict_post_meta_caps'), 10, 4);
         add_action('save_post', array($this, 'auto_assign_post_location'));
         add_filter('wp_insert_post_data', array($this, 'restrict_location_manager_posts'), 10, 2);
         add_action('admin_init', array($this, 'restrict_location_manager_access'));
@@ -541,11 +596,16 @@ class DS_Location_Manager_V2 {
 
             if (isset($args[0]) && is_numeric($args[0])) {
                 $post_id = intval($args[0]);
-                
+
                 if ($post_id == $user_location) {
+                    // Managers run their location; they don't get to trash
+                    // it. Deleting locations is admin-only.
+                    if ('delete_location' === $cap) {
+                        return array('do_not_allow');
+                    }
                     return array('exist');
                 }
-                
+
                 return array('do_not_allow');
             }
             
@@ -553,9 +613,7 @@ class DS_Location_Manager_V2 {
                 'edit_locations',
                 'edit_location', 
                 'publish_locations',
-                'read_location',
-                'delete_location',
-                'delete_locations'
+                'read_location'
             );
             
             if (in_array($cap, $allowed_general_caps)) {
@@ -566,7 +624,9 @@ class DS_Location_Manager_V2 {
                 'edit_others_locations',
                 'delete_others_locations',
                 'edit_private_locations',
-                'delete_private_locations'
+                'delete_private_locations',
+                'delete_location',
+                'delete_locations'
             );
             
             if (in_array($cap, $deny_caps)) {
@@ -576,7 +636,68 @@ class DS_Location_Manager_V2 {
 
         return $caps;
     }
-    
+
+    /**
+     * Scope regular posts to the Location Manager's assigned location.
+     *
+     * The role holds edit_others_posts / delete_others_posts so managers can
+     * run ALL posts at their location, not just their own — but without this
+     * filter those caps are sitewide: pre_get_posts only hides other
+     * locations' posts from the LIST TABLE, while direct post.php URLs and
+     * the core REST API (/wp/v2/posts/{id}) would happily let a manager edit
+     * or delete any post on the site. Routing the check through
+     * current_user_can() here closes admin UI and REST in one place.
+     *
+     * Deliberately read-only: this runs on every current_user_can()
+     * edit_post/delete_post check (once per row in list tables), so it reads
+     * the cached _ds_taxonomy_term_id meta directly instead of calling
+     * ensure_term_for_location(), which can write term updates.
+     *
+     * @param string[] $caps    Primitive caps the user must have.
+     * @param string   $cap     Meta cap being checked.
+     * @param int      $user_id
+     * @param array    $args    args[0] is the post ID for post meta caps.
+     * @return string[]
+     */
+    public function restrict_post_meta_caps($caps, $cap, $user_id, $args) {
+        if (!in_array($cap, array('edit_post', 'delete_post'), true) || empty($args[0])) {
+            return $caps;
+        }
+
+        $user = get_userdata($user_id);
+        if (!$user || in_array('administrator', (array) $user->roles, true)) {
+            return $caps;
+        }
+
+        if (!in_array('ds_location_manager', (array) $user->roles, true)) {
+            return $caps;
+        }
+
+        $post = get_post($args[0]);
+        if (!$post || $post->post_type !== 'post') {
+            // ds_location is handled by map_location_meta_caps(); everything
+            // else keeps core behavior.
+            return $caps;
+        }
+
+        // A manager's own posts are always theirs to manage.
+        if ((int) $post->post_author === $user_id) {
+            return $caps;
+        }
+
+        $assigned = get_user_meta($user_id, 'ds_assigned_location', true);
+        if (!$assigned) {
+            return array('do_not_allow');
+        }
+
+        $term_id = (int) get_post_meta((int) $assigned, '_ds_taxonomy_term_id', true);
+        if (!$term_id || !has_term($term_id, 'ds_post_location', $post)) {
+            return array('do_not_allow');
+        }
+
+        return $caps;
+    }
+
     public function remove_add_new_submenu() {
         $user = wp_get_current_user();
         if (in_array('ds_location_manager', (array) $user->roles)) {
@@ -589,21 +710,6 @@ class DS_Location_Manager_V2 {
         $user = wp_get_current_user();
         if (in_array('ds_location_manager', (array) $user->roles) && $screen && $screen->post_type === 'ds_location') {
             echo '<style>#wpbody-content .page-title-action { display:none; }</style>';
-        }
-    }
-
-    public function setup_location_manager_caps() {
-        $role = get_role('ds_location_manager');
-        if ($role) {
-            $role->add_cap('edit_location');
-            $role->add_cap('edit_locations');
-            $role->add_cap('edit_published_locations');
-            $role->add_cap('publish_locations');
-            $role->add_cap('read_location');
-            $role->add_cap('delete_location');
-            $role->add_cap('delete_published_locations');
-            $role->remove_cap('edit_others_locations');
-            $role->remove_cap('delete_others_locations');
         }
     }
 
@@ -933,6 +1039,7 @@ class DS_Location_Manager_V2 {
         $this->register_location_post_type();
         $this->register_location_taxonomy();
         $this->create_location_manager_role();
+        update_option('ds_lm_caps_version', self::CAPS_VERSION);
         flush_rewrite_rules();
 
         $existing_locations = get_posts(array('post_type' => 'ds_location', 'posts_per_page' => 1));
