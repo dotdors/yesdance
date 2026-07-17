@@ -75,12 +75,39 @@ final class DS_Theme_Customizations {
                 filemtime($css_file)
             );
         }
+
+        // Palette preview (client demo tool) — loads after plugin-style.css
+        // so its :root[data-palette] overrides win. Remove or gate this
+        // block once a palette decision is made.
+        $palette_css = $this->plugin_path . 'assets/palette-preview.css';
+        if (file_exists($palette_css)) {
+            wp_enqueue_style(
+                'ds-palette-preview',
+                $this->plugin_url . 'assets/palette-preview.css',
+                ['ds-custom-styles'],
+                filemtime($palette_css)
+            );
+        }
     }
 
     /**
      * Enqueue custom scripts
      */
     public function enqueue_scripts() {
+        // Palette preview (client demo tool) — in <head>, NOT deferred:
+        // must set data-palette before first paint or the client sees a
+        // red flash on every page load.
+        $palette_js = $this->plugin_path . 'assets/palette-preview.js';
+        if (file_exists($palette_js)) {
+            wp_enqueue_script(
+                'ds-palette-preview',
+                $this->plugin_url . 'assets/palette-preview.js',
+                [],
+                filemtime($palette_js),
+                false // head, intentionally
+            );
+        }
+
         // Main custom JS
         $js_file = $this->plugin_path . 'assets/custom.js';
         if (file_exists($js_file)) {

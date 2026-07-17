@@ -1,0 +1,166 @@
+/**
+ * Palette Preview — client demo tool
+ * DS Theme Customizations
+ *
+ * Alternate palettes for live comparison on the test site. Each palette is
+ * a [data-palette] attribute on <html> that overrides the CSS custom
+ * properties from _variables.less — no LESS recompile involved, and with
+ * no attribute present the site is byte-identical to production styles.
+ *
+ * Activate via the floating toggle (logged-in users) or ?palette=ocean
+ * in the URL (anyone — shareable with the client).
+ *
+ * NOTE: this is a preview tool. If a palette is chosen for real, promote
+ * its values into _variables.less and retire this file.
+ */
+
+/* ===== MIDNIGHT — shared base: deep blue replaces ink =====
+ * #052638 takes over every role ink #211E26 played: dark sections
+ * (header/footer via the --color-purple-dark legacy alias), body text,
+ * hero overlay, shadows. Paper/bone stay warm on purpose — warm neutrals
+ * against cold navy, and gold motif #F0A63B pops hardest on deep navy.
+ * :root[data-palette] outranks the plain :root block in plugin-style.css;
+ * hardcoded hexes in compiled CSS are only var() fallbacks.
+ */
+:root[data-palette="midnight-teal"],
+:root[data-palette="midnight-blue"],
+:root[data-palette="dusty-gold"],
+:root[data-palette="harbor"] {
+  --color-primary: #052638;      /* deep blue replaces ink #211E26 */
+  --color-ink: #052638;          /* dark sections, footer */
+  --color-purple-dark: #052638;  /* legacy alias — header/footer bg */
+  --color-text: #052638;         /* body text stays "ink" = the dark */
+  --color-text-light: #47606E;   /* secondary text: blue-gray (was warm gray #5C5861) */
+  --color-ink-40: color-mix(in srgb, #052638 40%, transparent);
+  --gradient-hero-overlay: linear-gradient(
+    135deg,
+    rgba(5, 38, 56, 0.88) 0%,
+    rgba(5, 38, 56, 0.62) 40%,
+    rgba(5, 38, 56, 0.3) 70%,
+    transparent 100%
+  );
+  --box-shadow: 0 1px 2px rgba(5, 38, 56, 0.06), 0 16px 40px -20px rgba(5, 38, 56, 0.28);
+  --box-shadow-hover: 0 2px 4px rgba(5, 38, 56, 0.07), 0 28px 56px -24px rgba(5, 38, 56, 0.38);
+  /* Deliberately NOT overridden: --color-background (paper), --color-surface
+   * (bone), --color-border, --color-gold. To cool the neutrals instead:
+   * --color-background: #FAFBFC; --color-surface: #EDF1F2; --color-border: #DEE3E4; */
+}
+
+/* Accent: sea teal — distinct from the navy so CTAs don't melt into
+ * dark sections. White text 4.7:1 (AA). */
+:root[data-palette="midnight-teal"] {
+  --color-accent: #2B7E8F;
+  --color-accent-ink: #1F5E6C;
+  --color-button-bg: #2B7E8F;
+  --color-accent-tint: color-mix(in oklab, #2B7E8F 9%, #FCFBF9);
+}
+
+/* Accent: azure — monochrome ocean, gold motif pops hardest; CTAs
+ * quieter than teal. White text ~5:1 (AA). */
+:root[data-palette="midnight-blue"] {
+  --color-accent: #1273B5;
+  --color-accent-ink: #0D5A8E;
+  --color-button-bg: #1273B5;
+  --color-accent-tint: color-mix(in oklab, #1273B5 9%, #FCFBF9);
+}
+
+/* ===== DUSTY GOLD — dusty blue surfaces, gold action =====
+ * #AFC7D6 is too light to be an action color (white text on it: 1.6:1),
+ * so it takes the SURFACE and MOTIF roles instead; gold takes action.
+ * Full-strength dusty is reserved for the motif slot — gold buttons on
+ * full dusty hit 1.17:1 and vanish, so section surfaces use a 45% tint.
+ * Neutrals are cooled to blend with the blue tones (warm bone next to
+ * dusty reads muddy).
+ */
+:root[data-palette="dusty-gold"] {
+  /* Cooled neutrals */
+  --color-background: #FAFCFD;                               /* cool paper */
+  --color-surface: color-mix(in oklab, #AFC7D6 45%, white);  /* dusty tint — alt sections */
+  --color-border: #C9D7E0;
+  --color-text-light: #3F5765;   /* darker blue-gray: AA on the dusty tint (5.6:1) */
+
+  /* Old gold for links/highlights — bright gold fails as text (1.9:1 on
+   * paper); buttons get the bright gold via the scoped rules below. */
+  --color-accent: #7E5600;
+  --color-accent-ink: #634300;
+  --color-accent-tint: color-mix(in oklab, #E9A431 12%, #FAFCFD);
+
+  /* Motif slot: dusty blue replaces gold (footprints/flourishes) —
+   * 8.9:1 against the navy footer. Gold now means "action". */
+  --color-gold: #AFC7D6;
+}
+
+/* Buttons under dusty-gold: the button rules in plugin-style.css use
+ * var(--color-accent) with hardcoded white text, which would be
+ * illegible on gold — scope the light-button pattern instead:
+ * gold fill + navy text + navy border (navy text carries the contrast
+ * at 7.3:1; the border separates the button from dusty surfaces). */
+[data-palette="dusty-gold"] .wp-block-button__link,
+[data-palette="dusty-gold"] .wp-element-button,
+[data-palette="dusty-gold"] .ds-btn--solid {
+  background: #E9A431;
+  color: #052638;
+  border-color: #052638;
+}
+
+[data-palette="dusty-gold"] .wp-block-button__link:hover,
+[data-palette="dusty-gold"] .wp-element-button:hover,
+[data-palette="dusty-gold"] .ds-btn--solid:hover {
+  background: #052638; /* invert on hover: navy fill, gold text */
+  color: #E9A431;
+  border-color: #052638;
+}
+
+/* ===== HARBOR — the parked v5 sketch, resurrected =====
+ * Values verbatim from the inert [data-theme="none"] block in
+ * _variables.less (a previous session's experiment): navy ink, coral
+ * action, dusty-blue motif, WARM neutrals kept. Inherits the midnight
+ * hero overlay + shadows from the shared base above.
+ */
+:root[data-palette="harbor"] {
+  --color-background: #F7F4EF;
+  --color-surface: #ECE7DD;
+  --color-border: #DCD5CA;
+  --color-text-light: #40606F;
+  --color-accent: #E0572F;
+  --color-accent-ink: #BC4322;
+  --color-button-bg: #E0572F;
+  --color-accent-tint: color-mix(in oklab, #E0572F 9%, #F7F4EF);
+  --color-gold: #E0572F; /* motif matches the coral accent — the parked
+                            dusty #AFC7D6 was too light to read */
+}
+
+/* ===== Toggle pill (only rendered for logged-in users, see JS) ===== */
+.ds-palette-toggle {
+  position: fixed;
+  bottom: 16px;
+  left: 16px;
+  z-index: 99999;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border: 1px solid var(--color-border, #E3E0D8);
+  border-radius: var(--border-radius-pill, 999px);
+  background: var(--color-secondary, #fff);
+  box-shadow: var(--box-shadow, 0 4px 12px rgba(33, 30, 38, 0.15));
+  font-family: var(--font-primary, sans-serif);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text, #211E26);
+  cursor: pointer;
+  transition: var(--transition, all 0.2s ease);
+}
+
+.ds-palette-toggle:hover {
+  box-shadow: var(--box-shadow-hover, 0 6px 20px rgba(33, 30, 38, 0.25));
+}
+
+.ds-palette-toggle__swatch {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--color-accent, #E8402A);
+  border: 2px solid var(--color-secondary, #fff);
+  outline: 1px solid var(--color-border, #E3E0D8);
+}
