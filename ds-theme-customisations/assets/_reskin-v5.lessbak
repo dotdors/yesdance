@@ -356,11 +356,8 @@ h1, h2, h3, h4,
 }
 
 // empty news placeholders: quiet bone panel instead of gray gradient
-// inset hairline keeps it from visually merging into the section —
-// --color-surface and --color-background are intentionally close in value
 .ds-news-card__placeholder {
   background: var(--color-surface);
-  box-shadow: inset 0 0 0 1px var(--color-border);
 }
 
 // carousel arrows: ink circles, accent on hover

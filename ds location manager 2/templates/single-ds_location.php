@@ -85,15 +85,19 @@ get_header();
                                 <?php echo wpautop(esc_html($location['yycd_description'])); ?>
                             </div>
                         <?php endif; ?>
+
+                        <?php if ($location['flyer_url']): ?>
+                            <p class="ds-location-about__flyer">
+                                <a class="ds-btn ds-btn--outline" href="<?php echo esc_url($location['flyer_url']); ?>" target="_blank" rel="noopener noreferrer">
+                                    Download our flyer
+                                </a>
+                            </p>
+                        <?php endif; ?>
                     </div>
                 <?php endif; ?>
 
                 <aside class="ds-contact-card">
-                    <h2 class="ds-contact-card__heading"><span class="text-accent">Contact</span> Us</h2>
-
-                    <p class="ds-contact-card__intro">
-                        Come dance with us. Find out more about our <strong>Yes, You Can Dance</strong> programs!
-                    </p>
+                    <h2 class="ds-contact-card__heading">Contact Us</h2>
 
                     <div class="ds-contact-card__group">
                         <h3 class="ds-contact-card__label">Find Us</h3>
@@ -112,7 +116,12 @@ get_header();
                         <?php endif; ?>
                         <?php if ($location['phone']): ?>
                             <p class="ds-contact-card__item">
-                                Phone: <a href="tel:<?php echo esc_attr(preg_replace('/[^0-9]/', '', $location['phone'])); ?>"><?php echo esc_html($location['phone']); ?></a>
+                                Call: <a href="tel:<?php echo esc_attr(preg_replace('/[^0-9]/', '', $location['phone'])); ?>"><?php echo esc_html($location['phone']); ?></a>
+                            </p>
+                        <?php endif; ?>
+                        <?php if ($location['text_phone']): ?>
+                            <p class="ds-contact-card__item">
+                                Text: <a href="sms:<?php echo esc_attr(preg_replace('/[^0-9]/', '', $location['text_phone'])); ?>"><?php echo esc_html($location['text_phone']); ?></a>
                             </p>
                         <?php endif; ?>
                         <?php if ($location['email']): ?>

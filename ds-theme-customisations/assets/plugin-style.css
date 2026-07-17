@@ -1810,6 +1810,7 @@ h4,
 }
 .ds-news-card__placeholder {
   background: var(--color-surface);
+  box-shadow: inset 0 0 0 1px var(--color-border);
 }
 .ds-news-carousel-nav {
   background: var(--color-background);

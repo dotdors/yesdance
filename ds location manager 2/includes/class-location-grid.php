@@ -93,10 +93,10 @@ class DS_Location_Grid_Shortcode {
      */
     public static function get_location_data($post_id) {
         return array(
-            'name' => get_post_meta($post_id, 'ds_location_name', true) ?: get_the_title($post_id),
-            'city' => get_post_meta($post_id, 'ds_location_city', true),
-            'state' => get_post_meta($post_id, 'ds_location_state', true),
-            'logo' => get_post_meta($post_id, 'ds_location_logo', true),
+            'name' => get_post_meta($post_id, '_ds_location_name', true) ?: get_the_title($post_id),
+            // 'city' is the post title (see DS_Location_Data) — not a separate meta field
+            'city' => get_the_title($post_id),
+            'logo' => get_post_meta($post_id, '_ds_location_logo', true),
             'featured_image' => get_the_post_thumbnail_url($post_id, 'large')
         );
     }

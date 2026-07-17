@@ -79,8 +79,8 @@ if (!defined('ABSPATH')) {
                     
                     <div class="ds-location-card__content">
                         <h3 class="ds-location-card__title"><?php echo esc_html($location_data['name']); ?></h3>
-                        <?php if ($location_data['state']) : ?>
-                            <p class="ds-location-card__subtitle"><?php echo esc_html($location_data['state']); ?></p>
+                        <?php if ($location_data['city']) : ?>
+                            <p class="ds-location-card__subtitle"><?php echo esc_html($location_data['city']); ?></p>
                         <?php endif; ?>
                     </div>
                     

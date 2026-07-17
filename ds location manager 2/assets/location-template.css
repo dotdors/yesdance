@@ -118,6 +118,7 @@
   position: absolute;
   inset: 0;
   height: 100%;
+  isolation: isolate; /* contains Leaflet's internal z-index stacking (panes/controls run up to 1000) so it can't escape above the header or location dropdown */
 }
 
 /* ============================================================
@@ -174,6 +175,10 @@
 
 .ds-location-about__content p { margin-bottom: 1em; }
 
+.ds-location-about__flyer {
+  margin: 1.5rem 0 0;
+}
+
 /* --- contact card --- */
 .ds-contact-card {
   position: sticky;
@@ -195,12 +200,6 @@
   color: var(--color-accent, #E8402A);
   font-style: italic;
   font-weight: 600;
-}
-
-.ds-contact-card__intro {
-  color: var(--color-text-light, #5C5861);
-  font-size: var(--font-size-small, 0.95rem);
-  margin: 0 0 1.25rem;
 }
 
 .ds-contact-card__group { margin-bottom: 1.25rem; }
@@ -244,6 +243,24 @@
 
 .ds-btn--solid:hover {
   background: var(--color-accent-ink, #C33420);
+  transform: translateY(-2px);
+}
+
+.ds-btn--outline {
+  display: inline-block;
+  font-weight: 700;
+  padding: 0.8em 1.8em;
+  border-radius: var(--border-radius-pill, 999px);
+  background: transparent;
+  color: var(--color-accent, #E8402A) !important;
+  border: 2px solid var(--color-accent, #E8402A);
+  text-decoration: none;
+  transition: transform 0.18s ease, background 0.18s ease, color 0.18s ease;
+}
+
+.ds-btn--outline:hover {
+  background: var(--color-accent, #E8402A);
+  color: #fff !important;
   transform: translateY(-2px);
 }
 

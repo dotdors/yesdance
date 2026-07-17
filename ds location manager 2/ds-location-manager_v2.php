@@ -16,7 +16,8 @@ class DS_Location_Manager_V2 {
 
     public function __construct() {
         // Include required files
-        require_once plugin_dir_path(__FILE__) . 'location-template-functions.php';
+        require_once plugin_dir_path(__FILE__) . 'includes/class-location-fields.php';
+        require_once plugin_dir_path(__FILE__) . 'includes/class-location-data.php';
         require_once plugin_dir_path(__FILE__) . 'includes/meta-boxes.php';
         require_once plugin_dir_path(__FILE__) . 'includes/admin-customizations.php';
         require_once plugin_dir_path(__FILE__) . 'includes/app-settings.php';
@@ -27,6 +28,7 @@ class DS_Location_Manager_V2 {
         
         add_action('init', array($this, 'init'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
+        add_filter('enter_title_here', array($this, 'location_title_placeholder'), 10, 2);
         
         // Template loader for single location pages
         add_filter('template_include', array($this, 'load_location_template'));
@@ -149,36 +151,48 @@ class DS_Location_Manager_V2 {
         }
 
         $post_obj = get_post($post_id);
-        $logo_id = get_post_meta($post_id, '_ds_location_logo', true);
-        $city = get_post_meta($post_id, '_ds_location_city', true);
-        
-        if (empty($city)) {
-            $address = get_post_meta($post_id, '_ds_location_address', true);
-            $city = $this->extract_city_from_address($address);
-        }
-        
+        $data = DS_Location_Data::get_all($post_id);
+
         return array(
-            'id' => $post_id,
-            'title' => $post_obj->post_title,
-            'content' => $post_obj->post_content,
-            'location_name' => get_post_meta($post_id, '_ds_location_name', true) ?: $post_obj->post_title,
-            'city' => $city,
-            'address' => get_post_meta($post_id, '_ds_location_address', true),
-            'phone' => get_post_meta($post_id, '_ds_location_phone', true),
-            'email' => get_post_meta($post_id, '_ds_location_email', true),
-            'website' => get_post_meta($post_id, '_ds_location_website', true),
-            'contact_name' => get_post_meta($post_id, '_ds_location_contact_name', true),
-            'description' => get_post_meta($post_id, '_ds_location_description', true),
-            'yycd_description' => get_post_meta($post_id, '_ds_location_yycd_description', true),
-            'featured_image' => get_the_post_thumbnail_url($post_id, 'large'),
-            'logo_url' => $logo_id ? wp_get_attachment_url($logo_id) : '',
-            'latitude' => get_post_meta($post_id, '_ds_location_latitude', true),
-            'longitude' => get_post_meta($post_id, '_ds_location_longitude', true),
+            'id'               => $post_id,
+            'title'            => $post_obj->post_title,
+            'content'          => $post_obj->post_content,
+            'location_name'    => $data['name'] ?: $post_obj->post_title,
+            'city'             => $data['city'],
+            'address'          => $data['address'],
+            'phone'            => $data['phone'],
+            'text_phone'       => $data['text_phone'],
+            'email'            => $data['email'],
+            'website'          => $data['website'],
+            'contact_name'     => $data['contact_name'],
+            'description'      => $data['description'],
+            'yycd_description' => $data['yycd_description'],
+            'featured_image'   => $data['featured_image'],
+            'logo_url'         => $data['logo_url'],
+            'flyer_url'        => $data['flyer_url'],
+            'latitude'         => $data['latitude'],
+            'longitude'        => $data['longitude'],
         );
     }
 
     /**
+     * Relabel the title prompt on the standard editor — for ds_location
+     * posts, the title IS the city (single source of truth, see
+     * DS_Location_Data), so prompt for that instead of a generic title.
+     */
+    public function location_title_placeholder($title, $post) {
+        if (isset($post->post_type) && $post->post_type === 'ds_location') {
+            return __('City (e.g. Jupiter, FL)', 'ds-location-manager');
+        }
+        return $title;
+    }
+
+    /**
      * Extract city from address
+     *
+     * @deprecated City now comes from the post title (see DS_Location_Data).
+     * Left in place in case address-based extraction is useful elsewhere —
+     * no longer called by the save paths or get_location_display_data().
      */
     public function extract_city_from_address($address) {
         $lines = explode("\n", $address);
@@ -808,13 +822,14 @@ class DS_Location_Manager_V2 {
 
         $location_id = $location[0]->ID;
         $location_url = get_permalink($location_id);
-        
-        $name = get_post_meta($location_id, '_ds_location_name', true) ?: $location[0]->post_title;
-        $address = get_post_meta($location_id, '_ds_location_address', true);
-        $phone = get_post_meta($location_id, '_ds_location_phone', true);
-        $email = get_post_meta($location_id, '_ds_location_email', true);
-        $website = get_post_meta($location_id, '_ds_location_website', true);
-        $contact = get_post_meta($location_id, '_ds_location_contact_name', true);
+        $data = DS_Location_Data::get_all($location_id);
+
+        $name = $data['name'] ?: $location[0]->post_title;
+        $address = $data['address'];
+        $phone = $data['phone'];
+        $email = $data['email'];
+        $website = $data['website'];
+        $contact = $data['contact_name'];
         
         // Use external website for CTA if available, otherwise link to location page
         $cta_url = $website ? $website : $location_url;
@@ -936,7 +951,6 @@ class DS_Location_Manager_V2 {
                 update_post_meta($location_id, '_ds_location_email', 'info@samplelocation.com');
                 update_post_meta($location_id, '_ds_location_contact_name', 'John Doe');
                 update_post_meta($location_id, '_ds_location_description', 'A sample location to get you started.');
-                update_post_meta($location_id, '_ds_location_id', $location_id);
                 $this->ensure_term_for_location($location_id);
             }
         }

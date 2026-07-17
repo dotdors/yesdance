@@ -127,24 +127,33 @@ function ds_get_locations_app(WP_REST_Request $request) {
 
     $data = [];
     foreach ($locations as $location) {
-        $logo_id = get_post_meta($location->ID, '_ds_location_logo', true);
-        
-        $data[] = [
+        $loc = DS_Location_Data::get_all($location->ID);
+
+        $entry = [
             'id'               => $location->ID,
             'title'            => get_the_title($location),
-            'name'             => get_post_meta($location->ID, '_ds_location_name', true),
-            'city'             => get_post_meta($location->ID, '_ds_location_city', true),
-            'address'          => get_post_meta($location->ID, '_ds_location_address', true),
-            'phone'            => get_post_meta($location->ID, '_ds_location_phone', true),
-            'email'            => get_post_meta($location->ID, '_ds_location_email', true),
-            'contact'          => get_post_meta($location->ID, '_ds_location_contact_name', true),
-            'description'      => get_post_meta($location->ID, '_ds_location_description', true),
-            'yycd_description' => get_post_meta($location->ID, '_ds_location_yycd_description', true),
-            'logo_id'          => $logo_id ? intval($logo_id) : null,
-            'logo_url'         => $logo_id ? wp_get_attachment_url($logo_id) : '',
-            'latitude'         => get_post_meta($location->ID, '_ds_location_latitude', true),
-            'longitude'        => get_post_meta($location->ID, '_ds_location_longitude', true),
+            'name'             => $loc['name'],
+            'city'             => $loc['city'],
+            'address'          => $loc['address'],
+            'phone'            => $loc['phone'],
+            'email'            => $loc['email'],
+            'contact'          => $loc['contact_name'],
+            'description'      => $loc['description'],
+            'yycd_description' => $loc['yycd_description'],
+            'logo_id'          => $loc['logo'] ? intval($loc['logo']) : null,
+            'logo_url'         => $loc['logo_url_medium'],
+            'latitude'         => $loc['latitude'],
+            'longitude'        => $loc['longitude'],
+            'website'          => $loc['website'],
+            'page_url'         => get_permalink($location->ID),
+            'flyer_url'        => $loc['flyer_url'],
         ];
+
+        if ($loc['text_phone']) {
+            $entry['text_phone'] = $loc['text_phone']; // omitted entirely when unset — app falls back to `phone`
+        }
+
+        $data[] = $entry;
     }
 
     $response = [

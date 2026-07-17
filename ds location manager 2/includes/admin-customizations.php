@@ -28,6 +28,7 @@ class DS_Location_Admin_Customizations {
         
         // Handle settings page form submission
         add_action('admin_post_ds_save_location_settings', array($this, 'handle_settings_save'));
+        add_action('admin_post_ds_create_location', array($this, 'handle_create_location'));
     }
 
     /**
@@ -121,24 +122,35 @@ class DS_Location_Admin_Customizations {
                 $all_locations = get_posts(array(
                     'post_type' => 'ds_location',
                     'posts_per_page' => -1,
-                    'post_status' => 'publish',
+                    'post_status' => array('publish', 'draft'),
                     'orderby' => 'title',
                     'order' => 'ASC'
                 ));
-                
+
+                $add_new_form = '<form method="post" action="' . esc_url(admin_url('admin-post.php')) . '" style="margin: 15px 0;">'
+                    . '<input type="hidden" name="action" value="ds_create_location">'
+                    . wp_nonce_field('ds_create_location', 'ds_create_location_nonce', true, false)
+                    . '<button type="submit" class="button button-primary">+ Add New Location</button>'
+                    . '</form>';
+
                 if (empty($all_locations)) {
-                    echo '<div class="notice notice-warning"><p>No locations found. ';
-                    echo '<a href="' . admin_url('post-new.php?post_type=ds_location') . '">Create your first location</a>.</p></div>';
+                    echo '<div class="notice notice-warning"><p>No locations found yet.</p></div>';
+                    echo $add_new_form;
                 } else {
                     echo '<div class="notice notice-info"><p>Select a location to edit its settings:</p></div>';
+                    echo $add_new_form;
                     echo '<div style="margin-top: 20px; padding: 20px; background: white; border: 1px solid #c3c4c7; max-width: 600px;">';
                     echo '<h2 style="margin-top: 0;">Choose Location</h2>';
                     echo '<ul style="list-style: none; margin: 0; padding: 0;">';
                     foreach ($all_locations as $loc) {
                         $edit_url = add_query_arg('location_id', $loc->ID, admin_url('edit.php?post_type=ds_location&page=ds-location-settings'));
+                        $title = $loc->post_title !== '' ? $loc->post_title : '(untitled — set the City)';
                         echo '<li style="margin: 10px 0; padding: 15px; background: #f6f7f7; border-left: 4px solid #2271b1;">';
                         echo '<a href="' . esc_url($edit_url) . '" style="text-decoration: none; font-size: 16px; font-weight: 600;">';
-                        echo esc_html($loc->post_title);
+                        echo esc_html($title);
+                        if ($loc->post_status === 'draft') {
+                            echo ' <span style="font-weight: 400; font-size: 13px; color: #997404;">(draft)</span>';
+                        }
                         echo ' <span style="color: #2271b1;">→</span>';
                         echo '</a>';
                         echo '</li>';
@@ -173,28 +185,17 @@ class DS_Location_Admin_Customizations {
             wp_die('Invalid location.');
         }
         
-        // Get all location meta
-        $data = array(
-            'name' => get_post_meta($location_id, '_ds_location_name', true) ?: $location->post_title,
-            'city' => get_post_meta($location_id, '_ds_location_city', true),
-            'address' => get_post_meta($location_id, '_ds_location_address', true),
-            'phone' => get_post_meta($location_id, '_ds_location_phone', true),
-            'email' => get_post_meta($location_id, '_ds_location_email', true),
-            'website' => get_post_meta($location_id, '_ds_location_website', true),
-            'contact_name' => get_post_meta($location_id, '_ds_location_contact_name', true),
-            'description' => get_post_meta($location_id, '_ds_location_description', true),
-            'yycd_description' => get_post_meta($location_id, '_ds_location_yycd_description', true),
-            'logo_id' => get_post_meta($location_id, '_ds_location_logo', true),
-            'latitude' => get_post_meta($location_id, '_ds_location_latitude', true),
-            'longitude' => get_post_meta($location_id, '_ds_location_longitude', true),
-        );
+        // Get all location data through the shared data class — single source of truth
+        $data = DS_Location_Data::get_all($location_id);
         
-        $logo_url = $data['logo_id'] ? wp_get_attachment_url($data['logo_id']) : '';
-        $featured_image_id = get_post_thumbnail_id($location_id);
-        $featured_image_url = $featured_image_id ? wp_get_attachment_image_url($featured_image_id, 'medium') : '';
+        $logo_url = $data['logo_url'];
+        $flyer_url = $data['flyer_url'];
+        $featured_image_id = $data['featured_image_id'];
+        $featured_image_url = $data['featured_image_medium'];
         
         // Check for save message
         $saved = isset($_GET['saved']) && $_GET['saved'] === '1';
+        $created = isset($_GET['created']) && $_GET['created'] === '1';
         
         // Enqueue media uploader
         wp_enqueue_media();
@@ -202,7 +203,7 @@ class DS_Location_Admin_Customizations {
         ?>
         <div class="wrap ds-location-settings-wrap">
             <h1>
-                <?php echo esc_html($data['name']); ?> — Location Settings
+                <?php echo esc_html($data['name'] ?: ($data['city'] ?: 'New Location')); ?> — Location Settings
             </h1>
             
             <?php 
@@ -212,7 +213,7 @@ class DS_Location_Admin_Customizations {
                 $all_locations = get_posts(array(
                     'post_type' => 'ds_location',
                     'posts_per_page' => -1,
-                    'post_status' => 'publish',
+                    'post_status' => array('publish', 'draft'),
                     'orderby' => 'title',
                     'order' => 'ASC'
                 ));
@@ -226,7 +227,7 @@ class DS_Location_Admin_Customizations {
                     <select id="ds-location-switcher" style="min-width: 300px;">
                         <?php foreach ($all_locations as $loc): ?>
                             <option value="<?php echo esc_attr($loc->ID); ?>" <?php selected($location_id, $loc->ID); ?>>
-                                <?php echo esc_html($loc->post_title); ?>
+                                <?php echo esc_html($loc->post_title !== '' ? $loc->post_title : '(untitled)'); ?><?php echo $loc->post_status === 'draft' ? ' (draft)' : ''; ?>
                             </option>
                         <?php endforeach; ?>
                     </select>
@@ -240,6 +241,12 @@ class DS_Location_Admin_Customizations {
                 endif;
             endif; 
             ?>
+            
+            <?php if ($created): ?>
+                <div class="notice notice-success is-dismissible">
+                    <p><strong>New location created!</strong> Start with the City field below — everything else can follow.</p>
+                </div>
+            <?php endif; ?>
             
             <?php if ($saved): ?>
                 <div class="notice notice-success is-dismissible">
@@ -270,17 +277,18 @@ class DS_Location_Admin_Customizations {
                         <h2>📋 Basic Information</h2>
                         
                         <div class="ds-field">
-                            <label for="ds_location_name">Location Name</label>
-                            <input type="text" id="ds_location_name" name="ds_location_name" 
-                                   value="<?php echo esc_attr($data['name']); ?>" class="regular-text">
-                            <p class="description">The display name for this location (shown in headers and navigation)</p>
+                            <label for="ds_location_city">City</label>
+                            <input type="text" id="ds_location_city" name="ds_location_city" 
+                                   value="<?php echo esc_attr($data['city']); ?>" class="regular-text"
+                                   placeholder="e.g. Jupiter, FL">
+                            <p class="description">This becomes the location's title across the site and app — keep it just the city (e.g. "Jupiter, FL"), not the studio name.</p>
                         </div>
                         
                         <div class="ds-field">
-                            <label for="ds_location_city">City</label>
-                            <input type="text" id="ds_location_city" name="ds_location_city" 
-                                   value="<?php echo esc_attr($data['city']); ?>" class="regular-text">
-                            <p class="description">City name for location lists and badges</p>
+                            <label for="ds_location_name">Studio / Program Name</label>
+                            <input type="text" id="ds_location_name" name="ds_location_name" 
+                                   value="<?php echo esc_attr($data['name']); ?>" class="regular-text">
+                            <p class="description">The studio or program name (e.g. "In Motion Ballroom") — separate from City above.</p>
                         </div>
                         
                         <div class="ds-field">
@@ -309,11 +317,29 @@ class DS_Location_Admin_Customizations {
                             <p class="description">Primary contact name for this location</p>
                         </div>
                         
+                        <?php $same_number = ($data['text_phone'] === '' || $data['text_phone'] === $data['phone']); ?>
+
                         <div class="ds-field">
-                            <label for="ds_location_phone">Phone Number</label>
+                            <label for="ds_location_phone">Phone Number (accepts calls)</label>
                             <input type="tel" id="ds_location_phone" name="ds_location_phone" 
                                    value="<?php echo esc_attr($data['phone']); ?>" class="regular-text" 
                                    placeholder="(555) 123-4567">
+                        </div>
+                        
+                        <div class="ds-field">
+                            <label>
+                                <input type="checkbox" id="ds_location_same_number" <?php checked($same_number); ?>>
+                                Same number accepts texts
+                            </label>
+                        </div>
+                        
+                        <div class="ds-field">
+                            <label for="ds_location_text_phone">Phone Number (accepts texts)</label>
+                            <input type="tel" id="ds_location_text_phone" name="ds_location_text_phone" 
+                                   value="<?php echo esc_attr($same_number ? $data['phone'] : $data['text_phone']); ?>" 
+                                   class="regular-text" placeholder="(555) 123-4567"
+                                   <?php echo $same_number ? 'readonly' : ''; ?>>
+                            <p class="description">Uncheck the box above for a different number, or leave this blank if this location can't receive texts at all (e.g. a landline).</p>
                         </div>
                         
                         <div class="ds-field">
@@ -371,7 +397,7 @@ class DS_Location_Admin_Customizations {
                             <label>Location Logo</label>
                             <div class="ds-image-uploader" data-target="ds_location_logo">
                                 <input type="hidden" id="ds_location_logo" name="ds_location_logo" 
-                                       value="<?php echo esc_attr($data['logo_id']); ?>">
+                                       value="<?php echo esc_attr($data['logo']); ?>">
                                 
                                 <div class="ds-image-preview <?php echo $logo_url ? 'has-image' : ''; ?>">
                                     <?php if ($logo_url): ?>
@@ -413,6 +439,30 @@ class DS_Location_Admin_Customizations {
                                 </div>
                             </div>
                             <p class="description">Main image for this location (displayed in hero and cards)</p>
+                        </div>
+                        
+                        <div class="ds-field">
+                            <label>Program Flyer</label>
+                            <div class="ds-flyer-uploader">
+                                <input type="hidden" id="ds_location_flyer" name="ds_location_flyer" 
+                                       value="<?php echo esc_attr($data['flyer']); ?>">
+                                
+                                <div class="ds-flyer-preview">
+                                    <?php if ($flyer_url): ?>
+                                        <a href="<?php echo esc_url($flyer_url); ?>" target="_blank"><?php echo esc_html(basename($flyer_url)); ?></a>
+                                    <?php endif; ?>
+                                </div>
+                                
+                                <div class="ds-image-actions">
+                                    <button type="button" class="button ds-upload-flyer">
+                                        <?php echo $flyer_url ? 'Change Flyer' : 'Upload Flyer'; ?>
+                                    </button>
+                                    <button type="button" class="button ds-remove-flyer <?php echo $flyer_url ? '' : 'hidden'; ?>">
+                                        Remove
+                                    </button>
+                                </div>
+                            </div>
+                            <p class="description">Optional PDF or image — becomes a "Download our flyer" button on the location page and in the app.</p>
                         </div>
                     </div>
                     
@@ -573,6 +623,27 @@ class DS_Location_Admin_Customizations {
         
         <script>
         jQuery(document).ready(function($) {
+            // Keep "Phone Number (accepts texts)" mirrored to "Phone Number (accepts calls)"
+            // whenever "Same number accepts texts" is checked.
+            var $callPhone = $('#ds_location_phone');
+            var $sameNumber = $('#ds_location_same_number');
+            var $textPhone = $('#ds_location_text_phone');
+
+            function syncTextPhone() {
+                if ($sameNumber.is(':checked')) {
+                    $textPhone.val($callPhone.val()).prop('readonly', true);
+                } else {
+                    $textPhone.prop('readonly', false);
+                }
+            }
+
+            $sameNumber.on('change', syncTextPhone);
+            $callPhone.on('input', function() {
+                if ($sameNumber.is(':checked')) {
+                    $textPhone.val($callPhone.val());
+                }
+            });
+
             // Image uploader functionality
             $('.ds-image-uploader').each(function() {
                 var $uploader = $(this);
@@ -616,6 +687,47 @@ class DS_Location_Admin_Customizations {
                     $uploadBtn.text('Upload Image');
                     $(this).addClass('hidden');
                 });
+            });
+
+            // Flyer uploader (PDF or image — kept separate from the image-only uploader above)
+            var $flyerInput = $('#ds_location_flyer');
+            var $flyerPreview = $('.ds-flyer-preview');
+            var $flyerUploadBtn = $('.ds-upload-flyer');
+            var $flyerRemoveBtn = $('.ds-remove-flyer');
+            var flyerUploader;
+
+            $flyerUploadBtn.on('click', function(e) {
+                e.preventDefault();
+
+                if (flyerUploader) {
+                    flyerUploader.open();
+                    return;
+                }
+
+                flyerUploader = wp.media({
+                    title: 'Choose Flyer',
+                    button: { text: 'Use this file' },
+                    multiple: false,
+                    library: { type: ['application/pdf', 'image'] }
+                });
+
+                flyerUploader.on('select', function() {
+                    var attachment = flyerUploader.state().get('selection').first().toJSON();
+                    $flyerInput.val(attachment.id);
+                    $flyerPreview.html('<a href="' + attachment.url + '" target="_blank">' + attachment.filename + '</a>');
+                    $flyerUploadBtn.text('Change Flyer');
+                    $flyerRemoveBtn.removeClass('hidden');
+                });
+
+                flyerUploader.open();
+            });
+
+            $flyerRemoveBtn.on('click', function(e) {
+                e.preventDefault();
+                $flyerInput.val('');
+                $flyerPreview.html('');
+                $flyerUploadBtn.text('Upload Flyer');
+                $(this).addClass('hidden');
             });
         });
         </script>
@@ -669,66 +781,42 @@ class DS_Location_Admin_Customizations {
         if (!$location_id || !current_user_can('edit_post', $location_id)) {
             wp_die('You do not have permission to edit this location.');
         }
-        
-        // Save text fields
-        $text_fields = array('name', 'city', 'phone', 'email', 'contact_name', 'latitude', 'longitude');
-        foreach ($text_fields as $field) {
-            if (isset($_POST['ds_location_' . $field])) {
-                update_post_meta($location_id, '_ds_location_' . $field, sanitize_text_field($_POST['ds_location_' . $field]));
-            }
-        }
-        
-        // Save URL fields
-        if (isset($_POST['ds_location_website'])) {
-            $website = esc_url_raw($_POST['ds_location_website']);
-            if ($website) {
-                update_post_meta($location_id, '_ds_location_website', $website);
-            } else {
-                delete_post_meta($location_id, '_ds_location_website');
-            }
-        }
-        
-        // Save textarea fields
-        $textarea_fields = array('address', 'description', 'yycd_description');
-        foreach ($textarea_fields as $field) {
-            if (isset($_POST['ds_location_' . $field])) {
-                update_post_meta($location_id, '_ds_location_' . $field, sanitize_textarea_field($_POST['ds_location_' . $field]));
-            }
-        }
-        
-        // Save logo ID
-        if (isset($_POST['ds_location_logo'])) {
-            $logo_id = intval($_POST['ds_location_logo']);
-            if ($logo_id > 0) {
-                update_post_meta($location_id, '_ds_location_logo', $logo_id);
-            } else {
-                delete_post_meta($location_id, '_ds_location_logo');
-            }
-        }
-        
-        // Save featured image
-        if (isset($_POST['ds_featured_image'])) {
-            $featured_id = intval($_POST['ds_featured_image']);
-            if ($featured_id > 0) {
-                set_post_thumbnail($location_id, $featured_id);
-            } else {
-                delete_post_thumbnail($location_id);
-            }
-        }
-        
-        // Auto-extract city if empty
-        if (empty($_POST['ds_location_city']) && !empty($_POST['ds_location_address'])) {
-            $city = $this->plugin->extract_city_from_address($_POST['ds_location_address']);
-            if ($city) {
-                update_post_meta($location_id, '_ds_location_city', sanitize_text_field($city));
-            }
-        }
-        
+
+        DS_Location_Data::save($location_id, $_POST);
+
         // Sync taxonomy term
         $this->plugin->ensure_term_for_location($location_id);
         
         // Redirect back to settings page with success message
         $redirect_url = admin_url('admin.php?page=ds-location-settings&location_id=' . $location_id . '&saved=1');
+        wp_safe_redirect($redirect_url);
+        exit;
+    }
+
+    /**
+     * Handle "+ Add New Location" — the sanctioned creation path.
+     * Admin-only: location managers are assigned to an existing location
+     * rather than expected to create new ones.
+     */
+    public function handle_create_location() {
+        if (!isset($_POST['ds_create_location_nonce']) ||
+            !wp_verify_nonce($_POST['ds_create_location_nonce'], 'ds_create_location')) {
+            wp_die('Security check failed.');
+        }
+
+        if (!current_user_can('publish_locations')) {
+            wp_die('You do not have permission to create a location.');
+        }
+
+        $location_id = DS_Location_Data::create();
+
+        if (!$location_id) {
+            wp_die('Could not create the new location. Please try again.');
+        }
+
+        $this->plugin->ensure_term_for_location($location_id);
+
+        $redirect_url = admin_url('admin.php?page=ds-location-settings&location_id=' . $location_id . '&created=1');
         wp_safe_redirect($redirect_url);
         exit;
     }

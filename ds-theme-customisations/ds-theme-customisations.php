@@ -387,21 +387,25 @@ function ds_register_block_styles() {
 add_action('init', 'ds_register_block_styles');
 
 /**
- * Enqueue editor-specific styles
+ * Register editor-specific styles so they load correctly inside the
+ * block editor's iframe.
+ *
+ * WP 5.9+ renders the editor canvas in an iframe. wp_enqueue_style() on
+ * enqueue_block_editor_assets attaches the stylesheet to the admin <head>
+ * instead of the iframe, which is why the console was warning
+ * "ds-editor-styles-css was added to the iframe incorrectly" and drag/drop
+ * was misbehaving. add_editor_style() is the WP-native way to get a
+ * stylesheet into the iframe itself, and it accepts an absolute URL so it
+ * works fine called from a plugin (not just a theme's functions.php).
  */
-function ds_enqueue_editor_styles() {
+function ds_add_editor_styles() {
     $editor_css_path = plugin_dir_path(__FILE__) . 'assets/editor-style.css';
-    
+
     if (file_exists($editor_css_path)) {
-        wp_enqueue_style(
-            'ds-editor-styles',
-            plugin_dir_url(__FILE__) . 'assets/editor-style.css',
-            ['wp-edit-blocks'],
-            filemtime($editor_css_path)
-        );
+        add_editor_style(plugin_dir_url(__FILE__) . 'assets/editor-style.css?ver=' . filemtime($editor_css_path));
     }
 }
-add_action('enqueue_block_editor_assets', 'ds_enqueue_editor_styles');
+add_action('after_setup_theme', 'ds_add_editor_styles');
 
 /**
  * Accent text shortcode for highlighted words in headings
