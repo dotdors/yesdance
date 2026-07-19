@@ -1,0 +1,391 @@
+// ============================
+// _page-templates.less
+// Standard pages, single posts, news page, locations archive
+// (pairs with yycd-child page.php / single.php / home.php and the
+// plugin's archive-ds_location.php)
+// ============================
+
+// Content prose width — shared by the content column and the banner
+@prose-width: 72ch;
+
+// ---------------------------------------------------------
+// CONTAINER CONSTRAINT — the theme's .container has no max-width;
+// the location template scopes its own (--loc-width) and the homepage
+// constrains via block inner containers. These templates do the same.
+// ---------------------------------------------------------
+.ds-single-post .container,
+.ds-page .container,
+.ds-news-page .container,
+.ds-location-archive .container,
+.ds-post-nav.container {
+  max-width: var(--content-width, 1240px);
+  margin-inline: auto;
+  padding-inline: var(--spacing-lg);
+}
+
+// ---------------------------------------------------------
+// SPLIT POST/PAGE HERO — mirrors the location page's header-split
+// pattern: dark stage (meta + title, blush accent) left, featured
+// image right. --stage-only when there's no featured image.
+// ---------------------------------------------------------
+.ds-post-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+  min-height: clamp(320px, 42vh, 460px);
+  // Contained card, like the location page hero — not edge-to-edge
+  margin-block: var(--spacing-lg) var(--spacing-md);
+  border-radius: var(--border-radius-lg, 16px);
+  overflow: hidden;
+  box-shadow: var(--box-shadow);
+
+  &__stage {
+    display: flex;
+    align-items: center;
+    background:
+      radial-gradient(90% 110% at 85% 15%, rgba(232, 64, 42, 0.18), transparent 55%),
+      radial-gradient(70% 100% at 10% 95%, rgba(240, 166, 59, 0.10), transparent 60%),
+      var(--color-ink);
+    padding: clamp(2rem, 5vw, 3.5rem);
+  }
+
+  &__stage-inner {
+    width: 100%;
+  }
+
+  // The split-heading base rules (location-grid.css) center the text and
+  // color __primary with ink — both wrong on the dark stage. Scoped
+  // overrides win on specificity regardless of stylesheet order.
+  // Written out at (0,3,0) so no split-heading base rule, typography
+  // rule, or stylesheet order can repaint the title dark on the stage.
+  & &__stage &__title,
+  & &__stage &__title .ds-heading-split__primary {
+    color: #fff;
+  }
+
+  & &__stage &__title .ds-heading-split__accent {
+    color: var(--color-accent-soft);
+  }
+
+  &__title {
+    margin: 0;
+    text-align: left;
+    font-size: clamp(2.25rem, 4.5vw, 3.5rem);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  &__subtitle {
+    margin: var(--spacing-md) 0 0;
+    color: rgba(255, 255, 255, 0.82);
+    font-size: var(--font-size-large);
+    max-width: 45ch;
+  }
+
+  &__meta {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    margin-bottom: var(--spacing-sm);
+    color: rgba(255, 255, 255, 0.72);
+    font-size: var(--font-size-small);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  &__location {
+    color: var(--color-accent-soft);
+    font-weight: 600;
+  }
+
+  &__media {
+    position: relative;
+    min-height: 280px;
+
+    img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  @media (max-width: 781px) {
+    grid-template-columns: 1fr;
+
+    &__media {
+      min-height: 0;
+      aspect-ratio: 3 / 2;
+      order: -1; // image above the stage on mobile, like a card
+    }
+  }
+}
+
+// No featured image: simple in-flow header, left-justified, same column
+// as the content — no stage, no special background. Meta styles reuse
+// .ds-post-hero__meta but recolored for light background.
+.ds-post-plain-header {
+  margin-bottom: var(--spacing-lg);
+
+  .ds-post-hero__meta {
+    color: var(--color-text-light);
+  }
+
+  .ds-post-hero__location {
+    color: var(--color-accent);
+  }
+
+  &__title {
+    margin: 0;
+    text-align: left;
+    font-size: clamp(2.5rem, 5.5vw, 3.75rem);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+}
+
+// ---------------------------------------------------------
+// POST LAYOUT — prose + skinny contact sidebar (or centered prose
+// when the post/page has no location)
+// ---------------------------------------------------------
+.ds-post-layout {
+  padding-block: var(--spacing-2xl);
+
+  &__grid {
+    display: grid;
+    gap: var(--spacing-2xl);
+  }
+
+  &--has-sidebar &__grid {
+    grid-template-columns: minmax(0, @prose-width) minmax(250px, 320px);
+    justify-content: center;
+    align-items: start;
+  }
+
+  &--centered &__grid {
+    grid-template-columns: minmax(0, @prose-width);
+    justify-content: center;
+  }
+
+  &__content {
+    > * + * {
+      margin-block-start: var(--spacing-md);
+    }
+
+    img,
+    .wp-block-image,
+    .wp-block-embed {
+      max-width: 100%;
+      height: auto;
+    }
+  }
+
+  &__sidebar {
+    position: sticky;
+    top: var(--spacing-lg);
+  }
+
+  &__from {
+    margin-top: var(--spacing-xl);
+    padding-top: var(--spacing-lg);
+    border-top: 1px solid var(--color-border);
+  }
+
+  &__from-label {
+    display: block;
+    color: var(--color-text-light);
+    font-size: var(--font-size-small);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 0.25em;
+  }
+
+  &__from-name {
+    font-family: var(--font-display, inherit);
+    font-size: var(--font-size-large);
+    font-weight: 700;
+    color: var(--color-text);
+    text-decoration: none;
+
+    &:hover {
+      color: var(--color-accent);
+    }
+  }
+
+  @media (max-width: 981px) {
+    &--has-sidebar &__grid {
+      grid-template-columns: minmax(0, @prose-width);
+    }
+
+    &__sidebar {
+      position: static;
+    }
+  }
+}
+
+// News page header (home.php uses .ds-page-hero--flush)
+.ds-page-hero--flush {
+  background: none;
+  padding-block: clamp(2rem, 5vw, 3rem) var(--spacing-lg);
+
+  .ds-page-hero__title {
+    margin: 0;
+    text-wrap: balance;
+  }
+}
+
+// Prev/next post navigation
+.ds-post-nav {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--spacing-lg);
+  padding-block: var(--spacing-lg) var(--spacing-2xl);
+  border-top: 1px solid var(--color-border);
+
+  a {
+    color: var(--color-accent);
+    text-decoration: none;
+
+    &:hover {
+      color: var(--color-accent-ink);
+    }
+  }
+
+  &__next {
+    text-align: right;
+  }
+}
+
+// ---------------------------------------------------------
+// NEWS PAGE — .ds-news-card grid (cards styled by the plugin's
+// location-news-carousel.css; this is just layout)
+// ---------------------------------------------------------
+.ds-news-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--spacing-lg);
+  margin-block: var(--spacing-lg) var(--spacing-xl);
+
+  // Carousel sets a fixed card width for the track; the grid manages
+  // sizing itself.
+  .ds-news-card {
+    width: auto;
+  }
+}
+
+.ds-news-pagination {
+  padding-bottom: var(--spacing-2xl);
+  text-align: center;
+
+  .nav-links {
+    display: inline-flex;
+    gap: var(--spacing-sm);
+    align-items: center;
+  }
+
+  .page-numbers {
+    padding: 0.4em 0.9em;
+    border-radius: var(--border-radius-pill, 999px);
+    text-decoration: none;
+    color: var(--color-text);
+
+    &.current {
+      background: var(--color-accent);
+      color: #fff;
+    }
+
+    &:hover:not(.current) {
+      background: var(--color-accent-tint);
+    }
+  }
+}
+
+// ---------------------------------------------------------
+// LOCATIONS ARCHIVE — spacing around the shared grid
+// ---------------------------------------------------------
+.ds-location-archive {
+  padding-block: clamp(2.5rem, 6vw, 4rem) var(--spacing-2xl);
+
+  &__header {
+    margin-bottom: var(--spacing-xl);
+
+    h1 {
+      text-wrap: balance;
+    }
+  }
+
+  &__empty {
+    text-align: center;
+    color: var(--color-text-light);
+    padding-block: var(--spacing-2xl);
+  }
+}
+
+// ---------------------------------------------------------
+// POST LOCATION FOOTER — full-width multi-column band.
+// The footer is appended inside the 72ch prose column (the_content
+// filter), so it breaks out via translateX centering (no 100vw margin
+// trick = no scrollbar overflow). Scoped selectors outrank the plugin's
+// base .ds-post-location-footer styles in frontend.css.
+// ---------------------------------------------------------
+.ds-single-post .ds-post-location-footer {
+  width: min(var(--content-width, 1240px), 94vw);
+  margin: var(--spacing-2xl) 0 0 50%;
+  transform: translateX(-50%);
+  background: var(--color-surface);
+  border-radius: var(--border-radius-lg, 16px);
+  padding: clamp(1.5rem, 4vw, 3rem);
+
+  .ds-post-location-footer__inner {
+    display: grid;
+    grid-template-areas:
+      "head card"
+      "cta  card";
+    grid-template-columns: minmax(220px, 300px) 1fr;
+    gap: var(--spacing-lg) var(--spacing-2xl);
+    align-items: start;
+  }
+
+  .ds-post-location-footer__header {
+    grid-area: head;
+  }
+
+  .ds-post-location-footer__cta {
+    grid-area: cta;
+    justify-self: start;
+    align-self: start;
+  }
+
+  @media (max-width: 781px) {
+    .ds-post-location-footer__inner {
+      grid-template-areas:
+        "head"
+        "card"
+        "cta";
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+// Shared contact card inside the band: flat, and its groups become
+// side-by-side columns ("Find Us" | "Get In Touch"), actions spanning.
+.ds-contact-card--post-footer {
+  grid-area: card;
+  background: none;
+  border: 0;
+  box-shadow: none;
+  padding: 0;
+  position: static; // never sticky inside the footer
+
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: var(--spacing-lg);
+
+  .ds-contact-card__directions,
+  .ds-contact-card__website {
+    grid-column: 1 / -1;
+    margin: 0;
+  }
+}

@@ -146,34 +146,34 @@
   text-decoration: none !important;
   white-space: nowrap;
   transition: background-color 0.15s ease, color 0.15s ease;
+
+  // "View all locations" — always-available route back to the archive
+  &--all {
+    border-top: 1px solid var(--color-border);
+    color: var(--color-accent) !important;
+  }
   
   &:last-child {
     border-bottom: none;
   }
-  
-  &:hover,
+
+  // NOTE: hover / .is-current colors live in _reskin-v5.less
+  // (.location-picker__dropdown block: surface bg + accent text).
+  // The old accent-bg/white-text hover was removed 2026-07 — its
+  // !importants were overriding the reskin treatment.
+
   &:focus {
-    background: var(--color-accent, #e23b2a);
-    color: var(--color-secondary, #fff) !important;
-    text-decoration: none !important;
     outline: none;
   }
-  
+
   &:focus-visible {
     outline: 2px solid var(--color-accent, #e23b2a);
     outline-offset: -2px;
   }
-  
-  // Currently selected location
+
+  // Currently selected location — color comes from the reskin block
   &.is-current {
-    color: var(--color-accent, #e23b2a) !important;
     font-weight: 700;
-    background: rgba(226, 59, 42, 0.08);
-    
-    &:hover {
-      background: var(--color-accent, #e23b2a);
-      color: var(--color-secondary, #fff) !important;
-    }
   }
 }
 
@@ -196,13 +196,11 @@ nav {
   }
   
   .location-picker__item {
+    // Applies in all states (incl. hover) — the old per-state duplicates
+    // were removed 2026-07.
     text-decoration: none !important;
     border-bottom-color: rgba(0, 0, 0, 0.06) !important;
-    
-    &:hover {
-      text-decoration: none !important;
-    }
-    
+
     &:last-child {
       border-bottom: none !important;
     }

@@ -142,6 +142,7 @@ function ds_get_locations_app(WP_REST_Request $request) {
             'yycd_description' => $loc['yycd_description'],
             'logo_id'          => $loc['logo'] ? intval($loc['logo']) : null,
             'logo_url'         => $loc['logo_url_medium'],
+            'featured_image'   => get_the_post_thumbnail_url($location, 'medium') ?: null,
             'latitude'         => $loc['latitude'],
             'longitude'        => $loc['longitude'],
             'website'          => $loc['website'],
@@ -149,9 +150,10 @@ function ds_get_locations_app(WP_REST_Request $request) {
             'flyer_url'        => $loc['flyer_url'],
         ];
 
-        if ($loc['text_phone']) {
-            $entry['text_phone'] = $loc['text_phone']; // omitted entirely when unset — app falls back to `phone`
-        }
+        // Always present; empty string when texting isn't available (dev
+        // preference: stable key set over key-presence signaling). App shows
+        // a Text action iff non-empty — never falls back to `phone`.
+        $entry['text_phone'] = $loc['text_phone'] ? $loc['text_phone'] : '';
 
         $data[] = $entry;
     }

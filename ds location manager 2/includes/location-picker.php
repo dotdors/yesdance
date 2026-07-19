@@ -79,6 +79,14 @@ function yycd_location_nav_dropdown() {
                     <?php echo esc_html($display_name); ?>
                 </a>
             <?php endforeach; ?>
+
+            <?php // Always-available route back to the archive — once a
+                  // default location is saved, this is the only way there. ?>
+            <a href="<?php echo esc_url(get_post_type_archive_link('ds_location')); ?>"
+               class="location-picker__item location-picker__item--all"
+               role="menuitem">
+                View all locations &rarr;
+            </a>
         </div>
     </div>
     <?php

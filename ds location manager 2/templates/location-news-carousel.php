@@ -15,34 +15,7 @@ if (!defined('ABSPATH')) {
     
     <?php if (!empty($atts['heading'])) : ?>
         <div class="ds-news-carousel-header">
-            <?php 
-            // Two-color heading (reuse same pattern as location grid)
-            $heading = trim($atts['heading']);
-            $heading_parts = explode(' ', $heading);
-            $split_position = $atts['heading_word_split'];
-            
-            // Support "last" or negative numbers for last word
-            if ($split_position === 'last' || $split_position === '-1' || intval($split_position) === -1) {
-                $split_position = count($heading_parts);
-            } else {
-                $split_position = intval($split_position);
-            }
-            
-            if ($split_position > 0 && $split_position <= count($heading_parts)) {
-                echo '<h2 class="ds-heading-split">';
-                foreach ($heading_parts as $index => $word) {
-                    $word_num = $index + 1;
-                    $class = ($word_num == $split_position) ? 'ds-heading-split__accent' : 'ds-heading-split__primary';
-                    echo '<span class="' . esc_attr($class) . '">' . esc_html($word) . '</span>';
-                    if ($index < count($heading_parts) - 1) {
-                        echo ' ';
-                    }
-                }
-                echo '</h2>';
-            } else {
-                echo '<h2>' . esc_html($heading) . '</h2>';
-            }
-            ?>
+            <?php echo ds_split_heading($atts['heading'], $atts['heading_word_split']); ?>
             
             <?php if (!empty($atts['subtitle'])) : ?>
                 <p class="ds-news-carousel-subtitle"><?php echo esc_html($atts['subtitle']); ?></p>
@@ -61,53 +34,12 @@ if (!defined('ABSPATH')) {
         <div class="ds-news-carousel">
             <div class="ds-news-carousel-track">
                 
-                <?php while ($news_posts->have_posts()) : $news_posts->the_post(); ?>
-                    <?php 
-                    $location = DS_Location_News_Carousel::get_post_location(get_the_ID());
-                    $featured_image = get_the_post_thumbnail_url(get_the_ID(), 'medium_large');
-                    $logo_url = ($location && !empty($location['logo_url'])) ? $location['logo_url'] : '';
-                    ?>
-                    
-                    <article class="ds-news-card">
-                        <a href="<?php the_permalink(); ?>" class="ds-news-card__link">
-                            
-                            <div class="ds-news-card__image">
-                                <?php if ($featured_image) : ?>
-                                    <img src="<?php echo esc_url($featured_image); ?>" 
-                                         alt="<?php the_title_attribute(); ?>"
-                                         loading="lazy">
-                                <?php elseif ($logo_url) : ?>
-                                    <div class="ds-news-card__placeholder ds-news-card__placeholder--has-logo">
-                                        <img src="<?php echo esc_url($logo_url); ?>" 
-                                             alt="<?php echo esc_attr($location['name']); ?>" 
-                                             class="ds-news-card__placeholder-logo"
-                                             loading="lazy">
-                                    </div>
-                                <?php else : ?>
-                                    <div class="ds-news-card__placeholder"></div>
-                                <?php endif; ?>
-                                
-                                <?php if ($location) : ?>
-                                    <span class="ds-news-card__badge ds-news-card__badge--<?php echo esc_attr($location['type']); ?>">
-                                        <?php echo esc_html($location['name']); ?>
-                                    </span>
-                                <?php endif; ?>
-                            </div>
-                            
-                            <div class="ds-news-card__content">
-                                <h3 class="ds-news-card__title">
-                                    <?php the_title(); ?>
-                                </h3>
-                                
-                                <time class="ds-news-card__date" datetime="<?php echo get_the_date('c'); ?>">
-                                    <?php echo get_the_date(); ?>
-                                </time>
-                            </div>
-                            
-                        </a>
-                    </article>
-                    
-                <?php endwhile; ?>
+                <?php
+                while ($news_posts->have_posts()) : $news_posts->the_post();
+                    // Shared renderer — same card as the news page
+                    echo ds_render_news_card(get_the_ID());
+                endwhile;
+                ?>
                 
             </div>
         </div>

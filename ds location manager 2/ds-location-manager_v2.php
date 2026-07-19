@@ -32,6 +32,7 @@ class DS_Location_Manager_V2 {
         require_once plugin_dir_path(__FILE__) . 'includes/class-location-grid.php';
         require_once plugin_dir_path(__FILE__) . 'includes/class-location-news-carousel.php';
         require_once plugin_dir_path(__FILE__) . 'includes/location-picker.php';
+        require_once plugin_dir_path(__FILE__) . 'includes/template-parts.php';
 
         
         add_action('init', array($this, 'init'));
@@ -88,13 +89,47 @@ class DS_Location_Manager_V2 {
                 return $custom_template;
             }
         }
+
+        if (is_post_type_archive('ds_location')) {
+            $archive_template = plugin_dir_path(__FILE__) . 'templates/archive-ds_location.php';
+            if (file_exists($archive_template)) {
+                return $archive_template;
+            }
+        }
+
         return $template;
+    }
+
+    /**
+     * Locations archive query: all published locations, alphabetical.
+     * (A curated set this small doesn't need pagination; revisit alongside
+     * search/filtering if the location count ever warrants it.)
+     */
+    public function customize_location_archive_query($query) {
+        if (is_admin() || !$query->is_main_query() || !$query->is_post_type_archive('ds_location')) {
+            return;
+        }
+        $query->set('posts_per_page', -1);
+        $query->set('orderby', 'title');
+        $query->set('order', 'ASC');
     }
 
     /**
      * Enqueue assets for location template
      */
     public function enqueue_location_template_assets() {
+        // Contact-card styles are shared with the single-post location
+        // footer, so the template stylesheet loads on both.
+        if (is_singular(array('ds_location', 'post'))) {
+            $template_css = plugin_dir_path(__FILE__) . 'assets/location-template.css';
+            wp_enqueue_style(
+                'ds-location-template',
+                plugin_dir_url(__FILE__) . 'assets/location-template.css',
+                array(),
+                file_exists($template_css) ? filemtime($template_css) : $this->version
+            );
+        }
+
         if (is_singular('ds_location')) {
             wp_enqueue_style(
                 'leaflet-css',
@@ -109,13 +144,6 @@ class DS_Location_Manager_V2 {
                 array(),
                 '1.9.4',
                 true
-            );
-            
-            wp_enqueue_style(
-                'ds-location-template',
-                plugin_dir_url(__FILE__) . 'assets/location-template.css',
-                array(),
-                $this->version
             );
             
             wp_enqueue_script(
@@ -514,6 +542,7 @@ class DS_Location_Manager_V2 {
      */
     public function setup_access_control() {
         add_action('pre_get_posts', array($this, 'filter_posts_by_location'));
+        add_action('pre_get_posts', array($this, 'customize_location_archive_query'));
         add_filter('map_meta_cap', array($this, 'map_location_meta_caps'), 10, 4);
         add_filter('map_meta_cap', array($this, 'restrict_post_meta_caps'), 10, 4);
         add_action('save_post', array($this, 'auto_assign_post_location'));
@@ -900,8 +929,17 @@ class DS_Location_Manager_V2 {
         require_once plugin_dir_path(__FILE__) . 'patterns.php';
     }
 
+    /**
+     * Append the location footer to single posts.
+     *
+     * Rebuilt to reuse the shared contact card (ds_render_contact_card),
+     * so the footer always matches the single-location sidebar — including
+     * text_phone and directions, which the old hand-rolled markup lacked.
+     * Wrapper keeps the .ds-post-location-footer header ("This post is
+     * from ...") and CTA link around the shared card.
+     */
     public function append_location_footer_to_post($content) {
-        if (!is_singular('post')) {
+        if (!is_singular('post') || !in_the_loop() || !is_main_query()) {
             return $content;
         }
 
@@ -912,12 +950,10 @@ class DS_Location_Manager_V2 {
             return $content;
         }
 
-        $term = $terms[0];
-
         $location = get_posts(array(
-            'post_type' => 'ds_location',
-            'meta_key'  => '_ds_taxonomy_term_id',
-            'meta_value'=> $term->term_id,
+            'post_type'   => 'ds_location',
+            'meta_key'    => '_ds_taxonomy_term_id',
+            'meta_value'  => $terms[0]->term_id,
             'post_status' => 'publish',
             'numberposts' => 1
         ));
@@ -926,79 +962,40 @@ class DS_Location_Manager_V2 {
             return $content;
         }
 
-        $location_id = $location[0]->ID;
+        $location_id  = $location[0]->ID;
         $location_url = get_permalink($location_id);
-        $data = DS_Location_Data::get_all($location_id);
+        $data         = DS_Location_Data::get_all($location_id);
+        $name         = !empty($data['name']) ? $data['name'] : $location[0]->post_title;
 
-        $name = $data['name'] ?: $location[0]->post_title;
-        $address = $data['address'];
-        $phone = $data['phone'];
-        $email = $data['email'];
-        $website = $data['website'];
-        $contact = $data['contact_name'];
-        
-        // Use external website for CTA if available, otherwise link to location page
-        $cta_url = $website ? $website : $location_url;
-        $cta_external = $website ? true : false;
+        // CTA: external website when available, otherwise the location page
+        $cta_url      = !empty($data['website']) ? $data['website'] : $location_url;
+        $cta_external = !empty($data['website']);
 
-        // Build the footer HTML
-        $html = '<aside class="ds-post-location-footer">';
+        $html  = '<aside class="ds-post-location-footer">';
         $html .= '<div class="ds-post-location-footer__inner">';
-        
-        // Header with location name
+
         $html .= '<div class="ds-post-location-footer__header">';
         $html .= '<span class="ds-post-location-footer__label">This post is from</span>';
         $html .= '<h3 class="ds-post-location-footer__title">';
         $html .= '<a href="' . esc_url($location_url) . '">' . esc_html($name) . '</a>';
         $html .= '</h3>';
         $html .= '</div>';
-        
-        // Contact details
-        $html .= '<div class="ds-post-location-footer__details">';
-        
-        if ($address) {
-            $html .= '<div class="ds-post-location-footer__item">';
-            $html .= '<span class="ds-post-location-footer__icon" aria-hidden="true">📍</span>';
-            $html .= '<span class="ds-post-location-footer__text">' . nl2br(esc_html($address)) . '</span>';
-            $html .= '</div>';
-        }
-        
-        if ($phone) {
-            $phone_clean = preg_replace('/[^0-9]/', '', $phone);
-            $phone_formatted = $this->format_phone_number($phone);
-            $html .= '<div class="ds-post-location-footer__item">';
-            $html .= '<span class="ds-post-location-footer__icon" aria-hidden="true">📞</span>';
-            $html .= '<a href="tel:' . esc_attr($phone_clean) . '" class="ds-post-location-footer__text">' . esc_html($phone_formatted) . '</a>';
-            $html .= '</div>';
-        }
-        
-        if ($email) {
-            $html .= '<div class="ds-post-location-footer__item">';
-            $html .= '<span class="ds-post-location-footer__icon" aria-hidden="true">✉️</span>';
-            $html .= '<a href="mailto:' . esc_attr($email) . '" class="ds-post-location-footer__text">' . esc_html($email) . '</a>';
-            $html .= '</div>';
-        }
-        
-        if ($contact) {
-            $html .= '<div class="ds-post-location-footer__item">';
-            $html .= '<span class="ds-post-location-footer__icon" aria-hidden="true">👤</span>';
-            $html .= '<span class="ds-post-location-footer__text">' . esc_html($contact) . '</span>';
-            $html .= '</div>';
-        }
-        
-        $html .= '</div>'; // .details
-        
-        // CTA link - opens in new tab if external website
+
+        // Shared contact card — same component as the location page sidebar.
+        // Website link suppressed inside the card; the CTA below covers it.
+        $html .= ds_render_contact_card($location_id, array(
+            'heading'      => '',
+            'show_website' => false,
+            'extra_class'  => 'ds-contact-card--post-footer',
+        ));
+
         $html .= '<a href="' . esc_url($cta_url) . '" class="ds-post-location-footer__cta"';
         if ($cta_external) {
             $html .= ' target="_blank" rel="noopener noreferrer"';
         }
-        $html .= '>';
-        $html .= 'Visit ' . esc_html($name);
-        $html .= $cta_external ? ' ↗' : ' →';
-        $html .= '</a>';
-        
-        $html .= '</div>'; // .inner
+        $html .= '>Visit ' . esc_html($name) . ($cta_external ? ' ↗' : ' →') . '</a>';
+
+        $html .= '</div>';
         $html .= '</aside>';
 
         return $content . $html;
@@ -1072,5 +1069,13 @@ class DS_Location_Manager_V2 {
 
     }
 
-// Initialize
-new DS_Location_Manager_V2();
+// Initialize — singleton accessor so templates can reach the instance
+// without re-instantiating the class (which would re-register every hook).
+function ds_location_manager() {
+    static $instance = null;
+    if (null === $instance) {
+        $instance = new DS_Location_Manager_V2();
+    }
+    return $instance;
+}
+ds_location_manager();

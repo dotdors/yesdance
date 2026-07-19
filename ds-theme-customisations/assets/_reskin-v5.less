@@ -42,7 +42,7 @@ h1, h2, h3, h4,
     color: #fff;
     max-width: 12ch;
 
-    .text-accent { color: #FFB4A8; } // accent reads muddy on dark video; use tint
+    .text-accent { color: var(--color-accent-soft); } // accent reads muddy on dark video; use blush tint
   }
 
   p { 
@@ -282,9 +282,13 @@ h1, h2, h3, h4,
   overflow: hidden;
 
   .location-picker__item:hover,
+  .location-picker__item:focus,
   .location-picker__item.is-current {
     background: var(--color-surface);
-    color: var(--color-accent);
+    // !important required: the base item rule in _location-picker.less
+    // guards its text color with !important against theme nav-link styles,
+    // and that guard applies during hover too.
+    color: var(--color-accent) !important;
   }
 }
 
@@ -346,6 +350,14 @@ h1, h2, h3, h4,
 
   @supports not (background: color-mix(in srgb, white, black)) {
     background: var(--color-surface); // replaces stale #e8ebf5 fallback
+  }
+
+  // On single location pages the carousel shouldn't read as a separate
+  // band — blend it into the page (higher specificity beats the section
+  // rhythm padding in §10). Homepage keeps the surface band.
+  .ds-location-template & {
+    background: var(--color-background);
+    padding: 0;
   }
 }
 

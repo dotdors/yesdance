@@ -5,9 +5,9 @@
  * v5.1 layout: header card (photo + map, title overlay) / about + sticky contact card / news (if any) / freeform
  */
 
-// Get location data
-$location_manager = new DS_Location_Manager_V2();
-$location = $location_manager->get_location_display_data(get_the_ID());
+// Get location data (singleton — never re-instantiate the plugin class here,
+// its constructor re-registers every hook)
+$location = ds_location_manager()->get_location_display_data(get_the_ID());
 
 if (!$location) {
     get_template_part('singular');

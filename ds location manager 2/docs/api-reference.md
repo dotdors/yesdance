@@ -26,7 +26,7 @@ Per-location payload:
 | `website` | `_ds_location_website` | External site for this location, if any |
 | `page_url` | `get_permalink()` | Link to this location's page on the YYCD site |
 | `flyer_url` | `_ds_location_flyer` | PDF or image attachment URL; empty string when not set |
-| `text_phone` | `_ds_location_text_phone` | **Present whenever this location accepts texts at all** (mirrors `phone` when the same number does both, or holds the distinct number when it doesn't). **Absent entirely** when texting isn't available (e.g. a landline). Consumers should show a Text action iff this key is present — no fallback logic needed. |
+| `text_phone` | `_ds_location_text_phone` | **Always present.** Non-empty whenever this location accepts texts (mirrors `phone` when the same number does both, or holds the distinct number when it doesn't); **empty string `""`** when texting isn't available (e.g. a landline). Consumers should show a Text action iff non-empty — no fallback to `phone`. (Changed 2026-07 from omit-when-unset, per app dev preference for a stable key set.) |
 
 ### `GET /posts_by_location`
 Defined: `rest.php` (~line 179). All location taxonomy terms, each with `term_id`, `name`, `slug`, `post_count`, and a lightweight `posts` array (`id`, `title`, `url`).

@@ -114,7 +114,7 @@
   right: 1rem;
   width: 48px;
   height: 48px;
-  background: var(--color-border, #eda318);
+  background: var(--color-accent, #E8402A);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -127,7 +127,7 @@
 .ds-location-card__pin svg {
   width: 24px;
   height: 24px;
-  color: var(--color-secondary, #fff);
+  color: #fff;
 }
 
 .ds-location-card:hover .ds-location-card__pin {
