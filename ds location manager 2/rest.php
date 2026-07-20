@@ -212,10 +212,18 @@ function ds_get_posts_by_location_app(WP_REST_Request $request) {
 
         $posts_data = [];
         foreach ($posts as $p) {
+            // Same lightweight post shape as /locations/{id}/posts (minus
+            // full content, which stays out of the bundle for payload size).
+            // featured_image/excerpt/date/sticky were missing here, which is
+            // where the app's home screen "lost" its images.
             $posts_data[] = [
-                'id'    => $p->ID,
-                'title' => get_the_title($p),
-                'url'   => get_permalink($p),
+                'id'             => $p->ID,
+                'title'          => get_the_title($p),
+                'url'            => get_permalink($p),
+                'excerpt'        => get_the_excerpt($p),
+                'date'           => get_the_date('c', $p),
+                'featured_image' => get_the_post_thumbnail_url($p, 'large') ?: null,
+                'sticky'         => is_sticky($p->ID),
             ];
         }
 

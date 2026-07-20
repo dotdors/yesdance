@@ -29,7 +29,7 @@ Per-location payload:
 | `text_phone` | `_ds_location_text_phone` | **Always present.** Non-empty whenever this location accepts texts (mirrors `phone` when the same number does both, or holds the distinct number when it doesn't); **empty string `""`** when texting isn't available (e.g. a landline). Consumers should show a Text action iff non-empty — no fallback to `phone`. (Changed 2026-07 from omit-when-unset, per app dev preference for a stable key set.) |
 
 ### `GET /posts_by_location`
-Defined: `rest.php` (~line 179). All location taxonomy terms, each with `term_id`, `name`, `slug`, `post_count`, and a lightweight `posts` array (`id`, `title`, `url`).
+Defined: `rest.php` (~line 179). All location taxonomy terms, each with `term_id`, `name`, `slug`, `post_count`, and a `posts` array. Per-post: `id`, `title`, `url`, `excerpt`, `date` (ISO 8601), `featured_image` (large, `null` when unset), `sticky` — same shape as `/locations/{id}/posts` except `content` is omitted to keep the bundle payload small (fetch `/posts/{id}` for full content). (`excerpt`/`date`/`featured_image`/`sticky` added 2026-07 to fix missing images on the app home screen.)
 
 ### `GET /locations/{id}/posts`
 Defined: `rest.php` → `ds_get_posts_for_location()` (~line 238). Paginated posts for one location (`page`, `per_page` params). Per-post: `id`, `title`, `url`, `excerpt`, `content` (rendered HTML), `date` (ISO 8601), `featured_image` (large), `sticky`.

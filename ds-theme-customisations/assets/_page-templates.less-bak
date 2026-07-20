@@ -456,22 +456,6 @@
   h2, h3, h4 {
     text-wrap: balance;
   }
-
-  // Magazine deck / standfirst — the intro paragraph runs full column
-  // width above the breakout figure, so style it like an editorial deck:
-  // larger, looser, slightly softened. Uses :first-of-type so the
-  // injected figure and the plain header don't affect the match.
-  > p:first-of-type {
-    font-size: clamp(1.1em, 1em + 0.45vw, 1.25em);
-    line-height: 1.55;
-    color: var(--color-text-light, inherit);
-    margin-block-end: var(--spacing-lg);
-
-    // Keep inline emphasis readable at the larger size
-    strong, b {
-      color: var(--color-text);
-    }
-  }
 }
 
 // Editor escape hatch: add this class to any heading/block that should
